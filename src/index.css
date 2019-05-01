@@ -1,0 +1,79 @@
+.cdx-attaches {
+    border: 1px solid #ebecec;
+    display: flex;
+    box-shadow: 0 1px 2px 0 rgba(34, 36, 44, 0.03);
+    border-radius: 3px;
+    padding: 15px;
+
+    &--with-file {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: flex-start;
+        align-items: center;
+        margin: 10px 0;
+        padding: 15px 20px;
+        background: #fff;
+        border: 1px solid #ebecec;
+        box-shadow: 0 1px 2px 0 rgba(34, 36, 44, 0.03);
+        border-radius: 3px;
+        font-size: 15px;
+
+        ^&__button {
+            justify-content: flex-start;
+
+            &::before {
+                background: none;
+            }
+        }
+
+        ^&__extension {
+            color: #8f9298;
+            white-space: nowrap;
+            text-transform: uppercase;
+
+            &::after {
+                content: ',';
+                margin-right: 0.2em;
+            }
+        }
+
+        ^&__size {
+            color: #8f9298;
+            white-space: nowrap;
+
+            &::after {
+                content: 'KB';
+                margin-left: 0.2em;
+            }
+        }
+
+        ^&__button {
+            cursor: default;
+            outline: none;
+        }
+    }
+
+    &__button {
+        color: #8990aa;
+        cursor: pointer;
+        display: flex;
+        flex-grow: 8;
+        justify-content: center;
+        align-items: center;
+        font-size: 15px;
+        word-break: break-all;
+
+        &::before {
+            display: inline-block;
+            content: '';
+            background: url('data:image/svg+xml,<svg height="48" width="48" xmlns="http://www.w3.org/2000/svg"><path clip-rule="evenodd" d="M37 47H11a4 4 0 0 1-4-4V5a4 4 0 0 1 4-4h19c.32 0 .593.161.776.395l9.829 9.829A.981.981 0 0 1 41 12v31a4 4 0 0 1-4 4zM31 4.381V11h6.619L31 4.381zM39 13h-9a1 1 0 0 1-1-1V3H11a2 2 0 0 0-2 2v38a2 2 0 0 0 2 2h26a2 2 0 0 0 2-2V13zm-6 26H15a1 1 0 1 1 0-2h18a1 1 0 1 1 0 2zm0-8H15a1 1 0 1 1 0-2h18a1 1 0 1 1 0 2zm0-8H15a1 1 0 1 1 0-2h18a1 1 0 1 1 0 2z" fill-rule="evenodd"/></svg>') center center / contain no-repeat;
+            width: 16px;
+            height: 16px;
+            margin-right: 4px;
+        }
+
+        &:hover {
+            color: #393f52;
+        }
+    }
+}
