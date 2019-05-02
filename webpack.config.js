@@ -4,7 +4,7 @@ module.exports = {
     path: __dirname + '/dist',
     publicPath: '/',
     filename: 'bundle.js',
-    library: 'Attaches',
+    library: 'AttachesTool',
     libraryTarget: 'umd',
     libraryExport: 'default'
   },
@@ -17,8 +17,8 @@ module.exports = {
           {
             loader: 'babel-loader',
             query: {
-              presets: [ '@babel/preset-env' ],
-            },
+              presets: [ '@babel/preset-env' ]
+            }
           },
           {
             loader: 'eslint-loader',

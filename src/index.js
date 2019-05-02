@@ -13,14 +13,14 @@ import Uploader from './uploader';
  */
 
 /**
- * @class Attaches
- * @classdesc Attaches Tool for Editor.js 2.0
+ * @class AttachesTool
+ * @classdesc AttachesTool for Editor.js 2.0
  *
  * @property {API} api - Editor.js API
  * @property {AttachesToolData} data
  * @property {Object} config
  */
-export default class Attaches {
+export default class AttachesTool {
   /**
    *
    * @param data
@@ -155,13 +155,13 @@ export default class Attaches {
        */
       const [extension, ...fullFileName] = file.name.split('.').reverse();
 
-      Object.assign(this.data, {
+      this.data = {
         url: file.url,
         name: file.name,
         extension: extension,
         size: Math.round(parseInt(file.size) / 1000), // size in KB
         title: fullFileName.join('.')
-      });
+      };
 
       this.nodes.button.removeEventListener('click', this.enableFileUpload);
       this.showFileData();
