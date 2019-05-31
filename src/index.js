@@ -1,6 +1,6 @@
 import './index.css';
-import ToolboxIcon from './svg/toolbox.svg';
 import Uploader from './uploader';
+import Icon from './svg/toolbox.svg';
 
 /**
  * @typedef {object} AttachesToolData
@@ -31,10 +31,8 @@ export default class AttachesTool {
     this.api = api;
 
     this.nodes = {
-      wrapper: null,
-      button: null,
-      size: null,
-      extension: null
+      holder: null,
+      title: null
     };
 
     this._data = {};
@@ -43,7 +41,7 @@ export default class AttachesTool {
       endpoint: config.endpoint || '',
       field: config.field || 'file',
       types: config.types || '*',
-      placeholder: config.placeholder || 'Загрузить'
+      placeholder: config.placeholder
     };
 
     this.data = data;
@@ -67,7 +65,7 @@ export default class AttachesTool {
    */
   static get toolbox() {
     return {
-      icon: ToolboxIcon,
+      icon: Icon,
       title: 'Attaches'
     };
   }
@@ -78,13 +76,15 @@ export default class AttachesTool {
   get CSS() {
     return {
       baseClass: this.api.styles.block,
-
+      button: this.api.styles.button,
+      loader: this.api.styles.loader,
       /**
        * Tool's classes
        */
-      wrapper: 'cdx-attaches',
-      wrapperWithFile: 'cdx-attaches--with-file',
-      button: 'cdx-attaches__button',
+      holder: 'cdx-attaches',
+      holderWithFile: 'cdx-attaches--with-file',
+      holderLoading: 'cdx-attaches--loading',
+      title: 'cdx-attaches__title',
       size: 'cdx-attaches__size',
       extension: 'cdx-attaches__extension'
     };
@@ -99,7 +99,7 @@ export default class AttachesTool {
      * If file was uploaded
      */
     if (this.data.url) {
-      const title = toolsContent.querySelector(`.${this.CSS.button}`).textContent;
+      const title = toolsContent.querySelector(`.${this.CSS.title}`).textContent;
 
       Object.assign(this.data, this._data, { title });
     }
@@ -112,23 +112,23 @@ export default class AttachesTool {
    * @return {HTMLDivElement}
    */
   render() {
-    this.nodes.wrapper = this.make('div', [this.CSS.baseClass, this.CSS.wrapper]);
-    this.nodes.button = this.make('div', this.CSS.button);
-    this.nodes.size = this.make('div', this.CSS.size);
-    this.nodes.extension = this.make('div', this.CSS.extension);
+    const wrapper = this.make('div', this.CSS.baseClass);
+
+    this.nodes.holder = this.make('div', [this.CSS.holder, this.CSS.button]);
+    this.nodes.title = this.make('div', this.CSS.title);
+
+    this.nodes.holder.appendChild(this.nodes.title);
 
     if (this.data.url) {
       this.showFileData();
     } else {
-      this.nodes.button.textContent = this.config.placeholder;
-      this.nodes.button.addEventListener('click', this.enableFileUpload);
+      this.nodes.title.innerHTML = this.config.placeholder || `${Icon} Upload`;
+      this.nodes.holder.addEventListener('click', this.enableFileUpload);
     }
 
-    this.nodes.wrapper.appendChild(this.nodes.button);
-    this.nodes.wrapper.appendChild(this.nodes.extension);
-    this.nodes.wrapper.appendChild(this.nodes.size);
+    wrapper.appendChild(this.nodes.holder);
 
-    return this.nodes.wrapper;
+    return wrapper;
   }
 
   /**
@@ -137,7 +137,7 @@ export default class AttachesTool {
   enableFileUpload() {
     this.uploader.uploadSelectedFile({
       onPreview: () => {
-        // TODO: add loader
+        this.nodes.holder.classList.add(this.CSS.holderLoading, this.CSS.loader);
       }
     });
   }
@@ -163,20 +163,29 @@ export default class AttachesTool {
         title: fullFileName.join('.')
       };
 
-      this.nodes.button.removeEventListener('click', this.enableFileUpload);
+      this.nodes.holder.removeEventListener('click', this.enableFileUpload);
       this.showFileData();
+      this.moveCaretToEnd(this.nodes.title);
+      this.removeLoader();
     } else {
       this.uploadingFailed('File upload failed');
     }
   }
 
   /**
+   * Removes tool's loader
+   */
+  removeLoader() {
+    setTimeout(() => this.nodes.holder.classList.remove(this.CSS.holderLoading, this.CSS.loader), 500);
+  }
+
+  /**
    * After file has loaded, add event-listeners and make field content-editable
    */
   prepareFileField() {
-    this.nodes.button.setAttribute('contentEditable', true);
+    this.nodes.title.setAttribute('contentEditable', true);
 
-    this.nodes.button.addEventListener('keydown', (event) => {
+    this.nodes.holder.addEventListener('keydown', (event) => {
       const A = 65;
       const cmdPressed = event.ctrlKey || event.metaKey;
 
@@ -192,10 +201,16 @@ export default class AttachesTool {
   showFileData() {
     this.prepareFileField();
 
-    this.nodes.wrapper.classList.add(this.CSS.wrapperWithFile);
-    this.nodes.button.textContent = this.data.title;
-    this.nodes.size.textContent = this.data.size;
-    this.nodes.extension.textContent = this.data.extension;
+    const size = this.make('div', this.CSS.size);
+    const extension = this.make('div', this.CSS.extension);
+
+    size.textContent = this.data.size;
+    extension.textContent = this.data.extension;
+
+    this.nodes.holder.classList.add(this.CSS.holderWithFile);
+    this.nodes.title.textContent = this.data.title;
+    this.nodes.holder.appendChild(extension);
+    this.nodes.holder.appendChild(size);
   }
 
   /**
@@ -207,6 +222,8 @@ export default class AttachesTool {
       message: errorMessage,
       style: 'error'
     });
+
+    this.removeLoader();
   }
 
   /**
@@ -229,6 +246,20 @@ export default class AttachesTool {
       extension: extension || this._data.extension,
       size: size || this._data.size
     });
+  }
+
+  /**
+   * Moves caret to the end of contentEditable element
+   * @param {HTMLElement} element - contentEditable element
+   */
+  moveCaretToEnd(element) {
+    const range = document.createRange();
+    const selection = window.getSelection();
+
+    range.selectNodeContents(element);
+    range.collapse(false);
+    selection.removeAllRanges();
+    selection.addRange(range);
   }
 
   /**
