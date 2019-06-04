@@ -14,18 +14,43 @@ const LOADER_TIMEOUT = 500;
  */
 
 /**
+ * @typedef {object} FileData
+ * @description Attaches Tool's response from backend
+ * @property {string} url - file's url
+ * @property {string} name - file's title [optional]
+ * @property {string} extension - file's extension [optional]
+ */
+
+/**
+ * @typedef {object} UploadResponseFormat
+ * @description This format expected from backend on file upload
+ * @property {number} success  - 1 for successful uploading, 0 for failure
+ * @property {FileData} file - backend response with uploaded file data.
+ */
+
+/**
+ * @typedef {object} AttachesToolConfig
+ * @description Config supported by Tool
+ * @property {string} endpoint - file upload url
+ * @property {string} field - field name for uploaded file
+ * @property {string} types - available mime-types
+ * @property {string} placeholder
+ * @property {string} errorMessage
+ */
+
+/**
  * @class AttachesTool
  * @classdesc AttachesTool for Editor.js 2.0
  *
  * @property {API} api - Editor.js API
  * @property {AttachesToolData} data
- * @property {Object} config
+ * @property {AttachesToolConfig} config
  */
 export default class AttachesTool {
   /**
-   * @param data
-   * @param config
-   * @param api
+   * @param {AttachesToolData} data
+   * @param {Object} config
+   * @param {API} api
    */
   constructor({ data, config, api }) {
     this.api = api;
@@ -41,7 +66,7 @@ export default class AttachesTool {
       endpoint: config.endpoint || '',
       field: config.field || 'file',
       types: config.types || '*',
-      placeholder: config.placeholder || 'Select file',
+      buttonPlaceholder: config.buttonPlaceholder || 'Select file',
       errorMessage: config.errorMessage || 'File upload failed'
     };
 
@@ -123,7 +148,7 @@ export default class AttachesTool {
     if (this.data.url) {
       this.showFileData();
     } else {
-      this.nodes.title.innerHTML = `${Icon} ${this.config.placeholder}`;
+      this.nodes.title.innerHTML = `${Icon} ${this.config.buttonPlaceholder}`;
       this.nodes.holder.addEventListener('click', this.enableFileUpload);
     }
 
