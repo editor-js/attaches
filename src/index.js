@@ -1,6 +1,7 @@
 import './index.css';
 import Uploader from './uploader';
 import Icon from './svg/toolbox.svg';
+const LOADER_TIMEOUT = 500;
 
 /**
  * @typedef {object} AttachesToolData
@@ -22,7 +23,6 @@ import Icon from './svg/toolbox.svg';
  */
 export default class AttachesTool {
   /**
-   *
    * @param data
    * @param config
    * @param api
@@ -41,7 +41,8 @@ export default class AttachesTool {
       endpoint: config.endpoint || '',
       field: config.field || 'file',
       types: config.types || '*',
-      placeholder: config.placeholder
+      placeholder: config.placeholder || 'Select file',
+      errorMessage: config.errorMessage || 'File upload failed'
     };
 
     this.data = data;
@@ -122,7 +123,7 @@ export default class AttachesTool {
     if (this.data.url) {
       this.showFileData();
     } else {
-      this.nodes.title.innerHTML = this.config.placeholder || `${Icon} Upload`;
+      this.nodes.title.innerHTML = `${Icon} ${this.config.placeholder}`;
       this.nodes.holder.addEventListener('click', this.enableFileUpload);
     }
 
@@ -168,7 +169,7 @@ export default class AttachesTool {
       this.moveCaretToEnd(this.nodes.title);
       this.removeLoader();
     } else {
-      this.uploadingFailed('File upload failed');
+      this.uploadingFailed(this.config.errorMessage);
     }
   }
 
@@ -176,7 +177,7 @@ export default class AttachesTool {
    * Removes tool's loader
    */
   removeLoader() {
-    setTimeout(() => this.nodes.holder.classList.remove(this.CSS.holderLoading, this.CSS.loader), 500);
+    setTimeout(() => this.nodes.holder.classList.remove(this.CSS.holderLoading, this.CSS.loader), LOADER_TIMEOUT);
   }
 
   /**
