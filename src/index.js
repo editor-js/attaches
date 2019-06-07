@@ -56,7 +56,7 @@ export default class AttachesTool {
     this.api = api;
 
     this.nodes = {
-      holder: null,
+      button: null,
       title: null
     };
 
@@ -66,7 +66,7 @@ export default class AttachesTool {
       endpoint: config.endpoint || '',
       field: config.field || 'file',
       types: config.types || '*',
-      buttonPlaceholder: config.buttonPlaceholder || 'Select file',
+      buttonText: config.buttonText || 'Select file',
       errorMessage: config.errorMessage || 'File upload failed'
     };
 
@@ -102,14 +102,14 @@ export default class AttachesTool {
   get CSS() {
     return {
       baseClass: this.api.styles.block,
-      button: this.api.styles.button,
+      apiButton: this.api.styles.button,
       loader: this.api.styles.loader,
       /**
        * Tool's classes
        */
-      holder: 'cdx-attaches',
-      holderWithFile: 'cdx-attaches--with-file',
-      holderLoading: 'cdx-attaches--loading',
+      button: 'cdx-attaches',
+      buttonWithFile: 'cdx-attaches--with-file',
+      buttonLoading: 'cdx-attaches--loading',
       title: 'cdx-attaches__title',
       size: 'cdx-attaches__size',
       extension: 'cdx-attaches__extension'
@@ -140,21 +140,30 @@ export default class AttachesTool {
   render() {
     const wrapper = this.make('div', this.CSS.baseClass);
 
-    this.nodes.holder = this.make('div', [this.CSS.holder, this.CSS.button]);
+    this.nodes.button = this.make('div', [this.CSS.apiButton, this.CSS.button]);
     this.nodes.title = this.make('div', this.CSS.title);
 
-    this.nodes.holder.appendChild(this.nodes.title);
+    this.nodes.button.appendChild(this.nodes.title);
 
     if (this.data.url) {
       this.showFileData();
     } else {
-      this.nodes.title.innerHTML = `${Icon} ${this.config.buttonPlaceholder}`;
-      this.nodes.holder.addEventListener('click', this.enableFileUpload);
+      this.nodes.title.innerHTML = `${Icon} ${this.config.buttonText}`;
+      this.nodes.button.addEventListener('click', this.enableFileUpload);
     }
 
-    wrapper.appendChild(this.nodes.holder);
+    wrapper.appendChild(this.nodes.button);
 
     return wrapper;
+  }
+
+  /**
+   * Fires after clicks on the Toolbox AttachesTool Icon
+   * Initiates click on the Select File button
+   * @public
+   */
+  appendCallback() {
+    this.nodes.button.click();
   }
 
   /**
@@ -163,7 +172,7 @@ export default class AttachesTool {
   enableFileUpload() {
     this.uploader.uploadSelectedFile({
       onPreview: () => {
-        this.nodes.holder.classList.add(this.CSS.holderLoading, this.CSS.loader);
+        this.nodes.button.classList.add(this.CSS.buttonLoading, this.CSS.loader);
       }
     });
   }
@@ -189,7 +198,7 @@ export default class AttachesTool {
         title: fullFileName.join('.')
       };
 
-      this.nodes.holder.removeEventListener('click', this.enableFileUpload);
+      this.nodes.button.removeEventListener('click', this.enableFileUpload);
       this.showFileData();
       this.moveCaretToEnd(this.nodes.title);
       this.removeLoader();
@@ -202,7 +211,7 @@ export default class AttachesTool {
    * Removes tool's loader
    */
   removeLoader() {
-    setTimeout(() => this.nodes.holder.classList.remove(this.CSS.holderLoading, this.CSS.loader), LOADER_TIMEOUT);
+    setTimeout(() => this.nodes.button.classList.remove(this.CSS.buttonLoading, this.CSS.loader), LOADER_TIMEOUT);
   }
 
   /**
@@ -211,7 +220,7 @@ export default class AttachesTool {
   prepareFileField() {
     this.nodes.title.setAttribute('contentEditable', true);
 
-    this.nodes.holder.addEventListener('keydown', (event) => {
+    this.nodes.button.addEventListener('keydown', (event) => {
       const A = 65;
       const cmdPressed = event.ctrlKey || event.metaKey;
 
@@ -233,10 +242,10 @@ export default class AttachesTool {
     size.textContent = this.data.size;
     extension.textContent = this.data.extension;
 
-    this.nodes.holder.classList.add(this.CSS.holderWithFile);
+    this.nodes.button.classList.add(this.CSS.buttonWithFile);
     this.nodes.title.textContent = this.data.title;
-    this.nodes.holder.appendChild(extension);
-    this.nodes.holder.appendChild(size);
+    this.nodes.button.appendChild(extension);
+    this.nodes.button.appendChild(size);
   }
 
   /**

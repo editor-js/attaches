@@ -19,7 +19,7 @@
     }
 
     ^&__title {
-      text-align: left;
+      justify-content: flex-start;
       cursor: default;
       outline: none;
     }
@@ -32,11 +32,14 @@
   }
 
   &__title {
+    display: flex;
     flex-grow: 8;
+    align-items: center;
+    justify-content: center;
 
     svg {
-      margin-bottom: 0px;
-      margin-top: 2px;
+      height: 14px;
+      margin-top: 0;
     }
 
     &:hover {
