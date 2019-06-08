@@ -1,13 +1,20 @@
 .cdx-attaches {
   &--with-file {
     display: flex;
+    padding: 13px 30px;
+    border: 1px solid #e5e6ec;
+    border-radius: 3px;
+    background: #fff;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
 
     ^&__extension {
       text-transform: uppercase;
 
-      &::after {
-        content: ',';
-        margin-right: 0.2em;
+      &:not(:last-child) {
+        &::after {
+          content: ',';
+          margin-right: 0.2em;
+        }
       }
     }
 
@@ -20,6 +27,7 @@
 
     ^&__title {
       justify-content: flex-start;
+      flex-grow: 8;
       cursor: default;
       outline: none;
     }
@@ -31,9 +39,8 @@
     }
   }
 
-  &__title {
+  &__button {
     display: flex;
-    flex-grow: 8;
     align-items: center;
     justify-content: center;
 

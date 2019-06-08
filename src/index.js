@@ -56,6 +56,7 @@ export default class AttachesTool {
     this.api = api;
 
     this.nodes = {
+      wrapper: null,
       button: null,
       title: null
     };
@@ -107,9 +108,10 @@ export default class AttachesTool {
       /**
        * Tool's classes
        */
-      button: 'cdx-attaches',
-      buttonWithFile: 'cdx-attaches--with-file',
-      buttonLoading: 'cdx-attaches--loading',
+      wrapper: 'cdx-attaches',
+      wrapperWithFile: 'cdx-attaches--with-file',
+      wrapperLoading: 'cdx-attaches--loading',
+      button: 'cdx-attaches__button',
       title: 'cdx-attaches__title',
       size: 'cdx-attaches__size',
       extension: 'cdx-attaches__extension'
@@ -138,23 +140,29 @@ export default class AttachesTool {
    * @return {HTMLDivElement}
    */
   render() {
-    const wrapper = this.make('div', this.CSS.baseClass);
+    const holder = this.make('div', this.CSS.baseClass);
 
-    this.nodes.button = this.make('div', [this.CSS.apiButton, this.CSS.button]);
-    this.nodes.title = this.make('div', this.CSS.title);
-
-    this.nodes.button.appendChild(this.nodes.title);
+    this.nodes.wrapper = this.make('div', this.CSS.wrapper);
 
     if (this.data.url) {
       this.showFileData();
     } else {
-      this.nodes.title.innerHTML = `${Icon} ${this.config.buttonText}`;
-      this.nodes.button.addEventListener('click', this.enableFileUpload);
+      this.prepareUploadButton();
     }
 
-    wrapper.appendChild(this.nodes.button);
+    holder.appendChild(this.nodes.wrapper);
 
-    return wrapper;
+    return holder;
+  }
+
+  /**
+   * Prepares button for file uploading
+   */
+  prepareUploadButton() {
+    this.nodes.button = this.make('div', [this.CSS.apiButton, this.CSS.button]);
+    this.nodes.button.innerHTML = `${Icon} ${this.config.buttonText}`;
+    this.nodes.button.addEventListener('click', this.enableFileUpload);
+    this.nodes.wrapper.appendChild(this.nodes.button);
   }
 
   /**
@@ -172,7 +180,7 @@ export default class AttachesTool {
   enableFileUpload() {
     this.uploader.uploadSelectedFile({
       onPreview: () => {
-        this.nodes.button.classList.add(this.CSS.buttonLoading, this.CSS.loader);
+        this.nodes.wrapper.classList.add(this.CSS.wrapperLoading, this.CSS.loader);
       }
     });
   }
@@ -198,7 +206,7 @@ export default class AttachesTool {
         title: fullFileName.join('.')
       };
 
-      this.nodes.button.removeEventListener('click', this.enableFileUpload);
+      this.nodes.button.remove();
       this.showFileData();
       this.moveCaretToEnd(this.nodes.title);
       this.removeLoader();
@@ -211,16 +219,18 @@ export default class AttachesTool {
    * Removes tool's loader
    */
   removeLoader() {
-    setTimeout(() => this.nodes.button.classList.remove(this.CSS.buttonLoading, this.CSS.loader), LOADER_TIMEOUT);
+    setTimeout(() => this.nodes.wrapper.classList.remove(this.CSS.wrapperLoading, this.CSS.loader), LOADER_TIMEOUT);
   }
 
   /**
-   * After file has loaded, add event-listeners and make field content-editable
+   * After file has loaded, prepare field with file name
    */
-  prepareFileField() {
-    this.nodes.title.setAttribute('contentEditable', true);
+  prepareTitleField() {
+    this.nodes.title = this.make('div', this.CSS.title, {
+      contentEditable: true
+    });
 
-    this.nodes.button.addEventListener('keydown', (event) => {
+    this.nodes.title.addEventListener('keydown', (event) => {
       const A = 65;
       const cmdPressed = event.ctrlKey || event.metaKey;
 
@@ -228,24 +238,32 @@ export default class AttachesTool {
         event.stopPropagation();
       }
     });
+
+    this.nodes.wrapper.appendChild(this.nodes.title);
   }
 
   /**
    * If upload is successful, show info about the file
    */
   showFileData() {
-    this.prepareFileField();
+    this.prepareTitleField();
 
-    const size = this.make('div', this.CSS.size);
-    const extension = this.make('div', this.CSS.extension);
-
-    size.textContent = this.data.size;
-    extension.textContent = this.data.extension;
-
-    this.nodes.button.classList.add(this.CSS.buttonWithFile);
+    this.nodes.wrapper.classList.add(this.CSS.wrapperWithFile);
     this.nodes.title.textContent = this.data.title;
-    this.nodes.button.appendChild(extension);
-    this.nodes.button.appendChild(size);
+
+    if (this.data.extension) {
+      const extension = this.make('div', this.CSS.extension);
+
+      extension.textContent = this.data.extension;
+      this.nodes.wrapper.appendChild(extension);
+    }
+
+    if (this.data.size) {
+      const size = this.make('div', this.CSS.size);
+
+      size.textContent = this.data.size;
+      this.nodes.wrapper.appendChild(size);
+    }
   }
 
   /**
