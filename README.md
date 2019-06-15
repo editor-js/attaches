@@ -74,10 +74,6 @@ This Tool returns `data` with following format
 | Field          | Type      | Description                     |
 | -------------- | --------- | ------------------------------- |
 | file           | `object`  | Uploaded file data. Any data got from backend uploader. Always contain the `url` property |
-| url        | `string`  | file's url |
-| size        | `string`  | file's caption |
-| extension     | `string` | file's extension            |
-| title | `string` | file's name          |
 
 ```json
 {
