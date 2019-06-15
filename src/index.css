@@ -28,6 +28,9 @@
     ^&__title {
       justify-content: flex-start;
       flex-grow: 8;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
       cursor: default;
       outline: none;
     }

@@ -24,19 +24,14 @@ export default class Uploader {
     ajax.transport({
       url: this.config.endpoint,
       accept: this.config.types,
-      beforeSend: (files) => {
-        const reader = new FileReader();
-
-        reader.readAsDataURL(files[0]);
-        reader.onload = (e) => {
-          onPreview(e.target.result);
-        };
-      },
+      beforeSend: () => onPreview(),
       fieldName: this.config.field
     }).then((response) => {
       this.onUpload(response);
     }).catch((error) => {
-      this.onError(error.message);
+      const message = (error && error.message) ? error.message : this.config.errorMessage;
+
+      this.onError(message);
     });
   }
 }

@@ -5,20 +5,25 @@ const LOADER_TIMEOUT = 500;
 
 /**
  * @typedef {object} AttachesToolData
- * @description Attaches Tool's input and output data format
- * @property {string} url
- * @property {string} name
- * @property {string} size
- * @property {string} extension
- * @property {string} title
+ * @description Attaches Tool's output data format
+ * @property {AttachesFileData} file - object containing information about the file
+ */
+
+/**
+ * @typedef {object} AttachesFileData
+ * @description Attaches Tool's file format
+ * @property {string} url - file's upload url
+ * @property {string} [size] - file's size
+ * @property {string} [extension] - file's extension
+ * @property {string} [title] - file's name
  */
 
 /**
  * @typedef {object} FileData
  * @description Attaches Tool's response from backend
  * @property {string} url - file's url
- * @property {string} name - file's title [optional]
- * @property {string} extension - file's extension [optional]
+ * @property {string} name - file's name with extension
+ * @property {string} extension - file's extension
  */
 
 /**
@@ -61,7 +66,9 @@ export default class AttachesTool {
       title: null
     };
 
-    this._data = {};
+    this._data = {
+      file: {}
+    };
 
     this.config = {
       endpoint: config.endpoint || '',
@@ -126,10 +133,10 @@ export default class AttachesTool {
     /**
      * If file was uploaded
      */
-    if (this.data.url) {
+    if (this.data.file.url) {
       const title = toolsContent.querySelector(`.${this.CSS.title}`).textContent;
 
-      Object.assign(this.data, this._data, { title });
+      Object.assign(this.data.file, this._data.file, { title });
     }
 
     return this.data;
@@ -144,7 +151,7 @@ export default class AttachesTool {
 
     this.nodes.wrapper = this.make('div', this.CSS.wrapper);
 
-    if (this.data.url) {
+    if (this.data.file.url) {
       this.showFileData();
     } else {
       this.prepareUploadButton();
@@ -190,19 +197,20 @@ export default class AttachesTool {
    * @param {UploadResponseFormat} response
    */
   onUpload(response) {
-    const { body: { success, file } } = response;
+    const body = response.body;
 
-    if (success && file && file.url) {
+    if (body.success && body.file) {
+      const { url, name, size } = body.file;
+
       /**
        * File name may be composite, for example, webpack.config.js
        */
-      const [extension, ...fullFileName] = file.name.split('.').reverse();
+      const [extension, ...fullFileName] = name.split('.').reverse();
 
-      this.data = {
-        url: file.url,
-        name: file.name,
-        extension: extension,
-        size: Math.round(parseInt(file.size) / 1000), // size in KB
+      this.data.file = {
+        url,
+        extension,
+        size: Math.round(parseInt(size) / 1000), // size in KB
         title: fullFileName.join('.')
       };
 
@@ -248,21 +256,25 @@ export default class AttachesTool {
   showFileData() {
     this.prepareTitleField();
 
-    this.nodes.wrapper.classList.add(this.CSS.wrapperWithFile);
-    this.nodes.title.textContent = this.data.title;
+    const { title, extension, size } = this.data.file;
 
-    if (this.data.extension) {
-      const extension = this.make('div', this.CSS.extension);
-
-      extension.textContent = this.data.extension;
-      this.nodes.wrapper.appendChild(extension);
+    if (title) {
+      this.nodes.wrapper.classList.add(this.CSS.wrapperWithFile);
+      this.nodes.title.textContent = this.data.file.title;
     }
 
-    if (this.data.size) {
-      const size = this.make('div', this.CSS.size);
+    if (extension) {
+      const fileExtension = this.make('div', this.CSS.extension);
 
-      size.textContent = this.data.size;
-      this.nodes.wrapper.appendChild(size);
+      fileExtension.textContent = extension;
+      this.nodes.wrapper.appendChild(fileExtension);
+    }
+
+    if (size) {
+      const fileSize = this.make('div', this.CSS.size);
+
+      fileSize.textContent = size;
+      this.nodes.wrapper.appendChild(fileSize);
     }
   }
 
@@ -280,7 +292,7 @@ export default class AttachesTool {
   }
 
   /**
-   * Return Attaches data
+   * Return Attaches Tool's data
    * @return {AttachesToolData}
    */
   get data() {
@@ -291,13 +303,12 @@ export default class AttachesTool {
    * Stores all Tool's data
    * @param {AttachesToolData} data
    */
-  set data({ url, title, name, extension, size }) {
-    this._data = Object.assign({}, {
-      url: url || this._data.url,
-      title: title || this._data.title,
-      name: name || this._data.name,
-      extension: extension || this._data.extension,
-      size: size || this._data.size
+  set data({ file }) {
+    this._data.file = Object.assign({}, {
+      url: (file && file.url) || this._data.file.url,
+      title: (file && file.title) || this._data.file.title,
+      extension: (file && file.extension) || this._data.file.extension,
+      size: (file && file.size) || this._data.file.size
     });
   }
 
