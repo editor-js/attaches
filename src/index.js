@@ -7,15 +7,16 @@ const LOADER_TIMEOUT = 500;
  * @typedef {object} AttachesToolData
  * @description Attaches Tool's output data format
  * @property {AttachesFileData} file - object containing information about the file
+ * @property {string} title - file's title
  */
 
 /**
  * @typedef {object} AttachesFileData
  * @description Attaches Tool's file format
- * @property {string} url - file's upload url
+ * @property {string} [url] - file's upload url
  * @property {string} [size] - file's size
  * @property {string} [extension] - file's extension
- * @property {string} [title] - file's name
+ * @property {string} [name] - file's name
  */
 
 /**
@@ -67,7 +68,8 @@ export default class AttachesTool {
     };
 
     this._data = {
-      file: {}
+      file: {},
+      title: ''
     };
 
     this.config = {
@@ -133,10 +135,10 @@ export default class AttachesTool {
     /**
      * If file was uploaded
      */
-    if (this.data.file.url) {
+    if (this.pluginHasData()) {
       const title = toolsContent.querySelector(`.${this.CSS.title}`).textContent;
 
-      Object.assign(this.data.file, this._data.file, { title });
+      Object.assign(this.data, { title });
     }
 
     return this.data;
@@ -151,7 +153,7 @@ export default class AttachesTool {
 
     this.nodes.wrapper = this.make('div', this.CSS.wrapper);
 
-    if (this.data.file.url) {
+    if (this.pluginHasData()) {
       this.showFileData();
     } else {
       this.prepareUploadButton();
@@ -182,6 +184,14 @@ export default class AttachesTool {
   }
 
   /**
+   * Checks if any of Tool's fields have data
+   * @return {boolean}
+   */
+  pluginHasData() {
+    return this.data.title !== '' || Object.values(this.data.file).some(item => item !== undefined);
+  }
+
+  /**
    * Allow to upload files on button click
    */
   enableFileUpload() {
@@ -207,10 +217,13 @@ export default class AttachesTool {
        */
       const [extension, ...fullFileName] = name.split('.').reverse();
 
-      this.data.file = {
-        url,
-        extension,
-        size: Math.round(parseInt(size) / 1000), // size in KB
+      this.data = {
+        file: {
+          url,
+          extension,
+          name,
+          size: Math.round(parseInt(size) / 1000) // size in KB
+        },
         title: fullFileName.join('.')
       };
 
@@ -254,13 +267,13 @@ export default class AttachesTool {
    * If upload is successful, show info about the file
    */
   showFileData() {
+    this.nodes.wrapper.classList.add(this.CSS.wrapperWithFile);
     this.prepareTitleField();
 
-    const { title, extension, size } = this.data.file;
+    const { file: { extension, size }, title } = this.data;
 
     if (title) {
-      this.nodes.wrapper.classList.add(this.CSS.wrapperWithFile);
-      this.nodes.title.textContent = this.data.file.title;
+      this.nodes.title.textContent = title;
     }
 
     if (extension) {
@@ -303,12 +316,15 @@ export default class AttachesTool {
    * Stores all Tool's data
    * @param {AttachesToolData} data
    */
-  set data({ file }) {
-    this._data.file = Object.assign({}, {
-      url: (file && file.url) || this._data.file.url,
-      title: (file && file.title) || this._data.file.title,
-      extension: (file && file.extension) || this._data.file.extension,
-      size: (file && file.size) || this._data.file.size
+  set data({ file, title }) {
+    this._data = Object.assign({}, {
+      file: {
+        url: (file && file.url) || this._data.file.url,
+        name: (file && file.name) || this._data.file.name,
+        extension: (file && file.extension) || this._data.file.extension,
+        size: (file && file.size) || this._data.file.size
+      },
+      title: title || this._data.title
     });
   }
 

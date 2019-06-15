@@ -6,7 +6,7 @@ This tool allows you to attach files to your articles.
 
 ![Example](https://capella.pics/9480f2c1-fd05-45b5-9d0f-20e40a9a2700.jpg)
 
-Get the package
+## Get the package
 
 ```shell
 npm i --save-dev @editorjs/attaches
@@ -73,16 +73,17 @@ This Tool returns `data` with following format
 
 | Field          | Type      | Description                     |
 | -------------- | --------- | ------------------------------- |
-| file           | `object`  | Uploaded file data. Any data got from backend uploader. Always contain the `url` property |
+| file           | `object`  | Uploaded file data. Any data got from backend uploader. |
+| title | `string` | File's title. Can be modified by user.          |
 
-Object `file` consists of the following fields
+Object `file` consists of the following fields. All of them are optional, `size` and `extension` are supported by design.
 
 | Field          | Type      | Description                     |
 | -------------- | --------- | ------------------------------- |
-| url        | `string`  | **Required:**  full public path of uploaded file|
-| size        | `number`  | file's size |
-| extension     | `string` | file's extension            |
-| title | `string` | file's name          |
+| url        | `string`  | Full public path of uploaded file|
+| size        | `number`  | File's size |
+| name | `string` | File's name          |
+| extension     | `string` | File's extension            |
 
 ```json
 {
@@ -91,9 +92,10 @@ Object `file` consists of the following fields
         "file": {
             "url" : "https://www.tesla.com/tesla_theme/assets/img/_vehicle_redesign/roadster_and_semi/roadster/hero.jpg",
             "size": 91,
-            "title": "Hero",
+            "name": "hero.jpg",
             "extension": "jpg"
-        }
+        },
+        "title": "Hero"
     }
 }
 ```
@@ -106,14 +108,12 @@ Response of your uploader **should** cover following format:
 {
     "success" : 1,
     "file": {
-        "url" : "https://www.tesla.com/tesla_theme/assets/img/_vehicle_redesign/roadster_and_semi/roadster/hero.jpg",
-        // ... and any additional fields you want
+        // ... any data you want
     }
 }
 ```
 
 **success** - uploading status. 1 for successful, 0 for failed
 
-**file** - uploaded file data. **Must** contain an `url` field with full public path to the uploaded file.
-Also, can contain any additional fields you want to store. For example, file name, size, extension etc.
-All additional fields will be saved at the `file` object of output data.
+**file** - uploaded file data.
+Can contain any fields you want to store. For example, url, name, size, extension etc. Fields size and extension are supported by design.
