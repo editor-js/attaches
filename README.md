@@ -75,6 +75,15 @@ This Tool returns `data` with following format
 | -------------- | --------- | ------------------------------- |
 | file           | `object`  | Uploaded file data. Any data got from backend uploader. Always contain the `url` property |
 
+Object `file` consists of the following fields
+
+| Field          | Type      | Description                     |
+| -------------- | --------- | ------------------------------- |
+| url        | `string`  | **Required:**  full public path of uploaded file|
+| size        | `number`  | file's size |
+| extension     | `string` | file's extension            |
+| title | `string` | file's name          |
+
 ```json
 {
     "type" : "attaches",
