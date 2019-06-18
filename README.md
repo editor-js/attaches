@@ -7,6 +7,9 @@ This tool allows you to attach files to your articles.
 ![Example](https://capella.pics/9480f2c1-fd05-45b5-9d0f-20e40a9a2700.jpg)
 
 ## Get the package
+You can get the package using any of these ways.
+
+### Install via npm
 
 ```shell
 npm i --save-dev @editorjs/attaches
@@ -56,7 +59,7 @@ var editor = EditorJS({
 
 ## Config Params
 
-Image Tool supports these configuration parameters:
+Attaches Tool supports these configuration parameters:
 
 | Field | Type     | Description        |
 | ----- | -------- | ------------------ |
@@ -73,17 +76,18 @@ This Tool returns `data` with following format
 
 | Field          | Type      | Description                     |
 | -------------- | --------- | ------------------------------- |
-| file           | `object`  | Uploaded file data. Any data got from backend uploader. |
-| title | `string` | File's title. Can be modified by user.          |
+| file           | `object`  | Uploaded file data. Data received from backend uploader. See description below. |
+| title | `string` | File's title. Initially set as uploaded file name. Can be modified by user.          |
 
+### file object <a name="file-object"></a>
 Object `file` consists of the following fields. All of them are optional, `size` and `extension` are supported by design.
 
-| Field          | Type      | Description                     |
-| -------------- | --------- | ------------------------------- |
-| url        | `string`  | Full public path of uploaded file|
-| size        | `number`  | File's size |
-| name | `string` | File's name          |
-| extension     | `string` | File's extension            |
+| Field          | Type      | Description                       |
+| -------------- | --------- | ----------------------------------|
+| url            |`string`   | Full public path of uploaded file |
+| size           |`number`   | File's size                       |
+| name           |`string`   | File's name                       |
+| extension      |`string`   | File's extension                  |
 
 ```json
 {
@@ -100,7 +104,7 @@ Object `file` consists of the following fields. All of them are optional, `size`
 }
 ```
 
-## Backend response format <a name="server-format"></a>
+## Backend response format
 
 Response of your uploader **should** cover following format:
 
@@ -108,7 +112,8 @@ Response of your uploader **should** cover following format:
 {
     "success" : 1,
     "file": {
-        // ... any data you want
+        // any data you want 
+        // for example: url, name, size
     }
 }
 ```
@@ -116,4 +121,4 @@ Response of your uploader **should** cover following format:
 **success** - uploading status. 1 for successful, 0 for failed
 
 **file** - uploaded file data.
-Can contain any fields you want to store. For example, url, name, size, extension etc. Fields size and extension are supported by design.
+Can contain data you want to store. Fields `url`, `name`, `size`, and `extension` if present will be written to [file object](#file-object). Fields size and extension are supported by design.
