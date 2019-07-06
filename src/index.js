@@ -129,6 +129,7 @@ export default class AttachesTool {
 
   /**
    * Return Block data
+   * @param {HTMLElement} toolsContent
    * @return {AttachesToolData}
    */
   save(toolsContent) {
