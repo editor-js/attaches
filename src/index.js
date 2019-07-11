@@ -76,7 +76,7 @@ export default class AttachesTool {
       endpoint: config.endpoint || '',
       field: config.field || 'file',
       types: config.types || '*',
-      buttonText: config.buttonText || 'Select file',
+      buttonText: config.buttonText || 'Select file to upload',
       errorMessage: config.errorMessage || 'File upload failed'
     };
 
@@ -216,16 +216,16 @@ export default class AttachesTool {
       /**
        * File name may be composite, for example, webpack.config.js
        */
-      const [extension, ...fullFileName] = name.split('.').reverse();
+      const splitted = name.split('.');
 
       this.data = {
         file: {
           url,
-          extension,
+          extension: splitted[splitted.length - 1],
           name,
           size: Math.round(parseInt(size) / 1000) // size in KB
         },
-        title: fullFileName.join('.')
+        title: name
       };
 
       this.nodes.button.remove();
@@ -250,15 +250,6 @@ export default class AttachesTool {
   prepareTitleField() {
     this.nodes.title = this.make('div', this.CSS.title, {
       contentEditable: true
-    });
-
-    this.nodes.title.addEventListener('keydown', (event) => {
-      const A = 65;
-      const cmdPressed = event.ctrlKey || event.metaKey;
-
-      if (event.keyCode === A && cmdPressed) {
-        event.stopPropagation();
-      }
     });
 
     this.nodes.wrapper.appendChild(this.nodes.title);

@@ -1,14 +1,15 @@
 .cdx-attaches {
   &--with-file {
     display: flex;
+    flex-direction: column;
     padding: 13px 30px;
-    border: 1px solid #e5e6ec;
+    border: 1px solid #e6e9eb;
     border-radius: 3px;
     background: #fff;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
 
     ^&__extension {
       text-transform: uppercase;
+      display: none;
 
       &:not(:last-child) {
         &::after {
@@ -19,15 +20,16 @@
     }
 
     ^&__size {
+      display: block;
+      color: #7b7e89;
       &::after {
-        content: 'KB';
+        content: 'kiB';
         margin-left: 0.2em;
       }
     }
 
     ^&__title {
-      justify-content: flex-start;
-      flex-grow: 8;
+      display: block;
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
@@ -50,6 +52,7 @@
     svg {
       height: 14px;
       margin-top: 0;
+      margin-right: 8px;
     }
 
     &:hover {
