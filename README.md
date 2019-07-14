@@ -4,7 +4,7 @@ Attaches Tool for the [Editor.js](https://codex.so/editor).
 
 This tool allows you to attach files to your articles.
 
-![Example](https://capella.pics/9480f2c1-fd05-45b5-9d0f-20e40a9a2700.jpg)
+![Example](https://capella.pics/93eed16f-c41f-49e6-88c9-5476eb02bb9b.jpg)
 
 ## Get the package
 You can get the package using any of these ways.

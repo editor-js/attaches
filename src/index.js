@@ -1,6 +1,9 @@
 import './index.css';
 import Uploader from './uploader';
 import Icon from './svg/toolbox.svg';
+import FileIcon from './svg/standard.svg';
+import CustomFileIcon from './svg/custom.svg';
+import DownloadIcon from './svg/arrow-download.svg';
 const LOADER_TIMEOUT = 500;
 
 /**
@@ -123,7 +126,9 @@ export default class AttachesTool {
       button: 'cdx-attaches__button',
       title: 'cdx-attaches__title',
       size: 'cdx-attaches__size',
-      extension: 'cdx-attaches__extension'
+      downloadButton: 'cdx-attaches__download-button',
+      fileInfo: 'cdx-attaches__file-info',
+      fileIcon: 'cdx-attaches__file-icon'
     };
   }
 
@@ -213,17 +218,12 @@ export default class AttachesTool {
     if (body.success && body.file) {
       const { url, name, size } = body.file;
 
-      /**
-       * File name may be composite, for example, webpack.config.js
-       */
-      const splitted = name.split('.');
-
       this.data = {
         file: {
           url,
-          extension: splitted[splitted.length - 1],
+          extension: name.split('.').pop(),
           name,
-          size: Math.round(parseInt(size) / 1000) // size in KB
+          size: (size / 1000).toFixed(1) // size in KB
         },
         title: name
       };
@@ -231,10 +231,119 @@ export default class AttachesTool {
       this.nodes.button.remove();
       this.showFileData();
       this.moveCaretToEnd(this.nodes.title);
+      this.nodes.title.focus();
       this.removeLoader();
     } else {
       this.uploadingFailed(this.config.errorMessage);
     }
+  }
+
+  /**
+   * Handles uploaded file's extension and appends corresponding icon
+   */
+  appendFileIcon() {
+    const extension = this.data.file.extension || '';
+    let extensionColor;
+    let knownExtension = true;
+
+    switch (extension.toLowerCase()) {
+      case 'doc':
+      case 'docx':
+      case 'odt':
+      {
+        extensionColor = '#3e74da';
+        break;
+      }
+      case 'pdf':
+      {
+        extensionColor = '#d47373';
+        break;
+      }
+      case 'rtf':
+      {
+        extensionColor = '#656ecd';
+        break;
+      }
+      case 'tex':
+      case 'txt':
+      {
+        extensionColor = '#5a5a5b';
+        break;
+      }
+      case 'pptx':
+      {
+        extensionColor = '#e07066';
+        break;
+      }
+      case 'mp3':
+      {
+        extensionColor = '#eab456';
+        break;
+      }
+      case 'xls':
+      {
+        extensionColor = '#3f9e64';
+        break;
+      }
+      case 'html':
+      case 'htm':
+      {
+        extensionColor = '#2988f0';
+        break;
+      }
+      case 'png':
+      {
+        extensionColor = '#f676a6';
+        break;
+      }
+      case 'jpg':
+      case 'jpeg':
+      {
+        extensionColor = '#f67676';
+        break;
+      }
+      case 'gif':
+      {
+        extensionColor = '#f6af76';
+        break;
+      }
+      case 'zip':
+      case 'rar':
+      {
+        extensionColor = '#4f566f';
+        break;
+      }
+      case 'exe':
+      {
+        extensionColor = '#e26f6f';
+        break;
+      }
+      case 'svg':
+      {
+        extensionColor = '#bf5252';
+        break;
+      }
+      case 'key':
+      {
+        extensionColor = '#e07066';
+        break;
+      }
+      default: {
+        knownExtension = false;
+      }
+    }
+
+    const fileIcon = this.make('div', this.CSS.fileIcon, {
+      innerHTML: knownExtension ? CustomFileIcon : FileIcon
+    });
+
+    if (knownExtension) {
+      fileIcon.style.color = extensionColor;
+      fileIcon.querySelector('svg').style.fill = extensionColor;
+      fileIcon.setAttribute('data-extension', extension);
+    }
+
+    this.nodes.wrapper.appendChild(fileIcon);
   }
 
   /**
@@ -245,42 +354,43 @@ export default class AttachesTool {
   }
 
   /**
-   * After file has loaded, prepare field with file name
-   */
-  prepareTitleField() {
-    this.nodes.title = this.make('div', this.CSS.title, {
-      contentEditable: true
-    });
-
-    this.nodes.wrapper.appendChild(this.nodes.title);
-  }
-
-  /**
    * If upload is successful, show info about the file
    */
   showFileData() {
     this.nodes.wrapper.classList.add(this.CSS.wrapperWithFile);
-    this.prepareTitleField();
 
-    const { file: { extension, size }, title } = this.data;
+    const { file: { size, url }, title } = this.data;
+
+    this.appendFileIcon();
+
+    const fileInfo = this.make('div', this.CSS.fileInfo);
 
     if (title) {
+      this.nodes.title = this.make('div', this.CSS.title, {
+        contentEditable: true
+      });
+
       this.nodes.title.textContent = title;
-    }
-
-    if (extension) {
-      const fileExtension = this.make('div', this.CSS.extension);
-
-      fileExtension.textContent = extension;
-      this.nodes.wrapper.appendChild(fileExtension);
+      fileInfo.appendChild(this.nodes.title);
     }
 
     if (size) {
       const fileSize = this.make('div', this.CSS.size);
 
       fileSize.textContent = size;
-      this.nodes.wrapper.appendChild(fileSize);
+      fileInfo.appendChild(fileSize);
     }
+
+    this.nodes.wrapper.appendChild(fileInfo);
+
+    const downloadIcon = this.make('a', this.CSS.downloadButton, {
+      innerHTML: DownloadIcon,
+      href: url,
+      target: '_blank',
+      rel: 'nofollow noindex noreferrer'
+    });
+
+    this.nodes.wrapper.appendChild(downloadIcon);
   }
 
   /**
