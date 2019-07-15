@@ -4,7 +4,7 @@ import Icon from './svg/toolbox.svg';
 import FileIcon from './svg/standard.svg';
 import CustomFileIcon from './svg/custom.svg';
 import DownloadIcon from './svg/arrow-download.svg';
-const LOADER_TIMEOUT = 1250;
+const LOADER_TIMEOUT = 500;
 
 /**
  * @typedef {object} AttachesToolData
