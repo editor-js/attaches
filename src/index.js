@@ -4,7 +4,7 @@ import Icon from './svg/toolbox.svg';
 import FileIcon from './svg/standard.svg';
 import CustomFileIcon from './svg/custom.svg';
 import DownloadIcon from './svg/arrow-download.svg';
-const LOADER_TIMEOUT = 500;
+const LOADER_TIMEOUT = 1250;
 
 /**
  * @typedef {object} AttachesToolData
@@ -145,6 +145,7 @@ export default class AttachesTool {
       'tex': '#5a5a5b',
       'txt': '#5a5a5b',
       'pptx': '#e07066',
+      'ppt': '#e07066',
       'mp3': '#eab456',
       'xls': '#3f9e64',
       'html': '#2988f0',
@@ -157,7 +158,10 @@ export default class AttachesTool {
       'rar': '#4f566f',
       'exe': '#e26f6f',
       'svg': '#bf5252',
-      'key': '#e07066'
+      'key': '#e07066',
+      'sketch': '#df821c',
+      'ai': '#df821c',
+      'psd': '#388ae5'
     };
   }
 
@@ -319,7 +323,7 @@ export default class AttachesTool {
       let formattedSize;
       const fileSize = this.make('div', this.CSS.size);
 
-      if (Math.log10(+size) > 5) {
+      if (Math.log10(+size) >= 6) {
         sizePrefix = 'MiB';
         formattedSize = size / Math.pow(2, 20);
       } else {
