@@ -14,7 +14,6 @@
     ^&__download-button {
       display: flex;
       align-items: center;
-      margin-right: 7px;
 
       svg {
         fill: #7b7e89;
