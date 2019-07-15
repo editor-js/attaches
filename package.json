@@ -7,6 +7,10 @@
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development --watch"
   },
+  "author": {
+    "name": "CodeX",
+    "email": "team@codex.so"
+  },
   "devDependencies": {
     "@codexteam/ajax": "^4.0.1",
     "css-loader": "^0.28.0",
