@@ -133,6 +133,35 @@ export default class AttachesTool {
   }
 
   /**
+   * Possible files' extension colors
+   */
+  get EXTENSIONS() {
+    return {
+      'doc': '#3e74da',
+      'docx': '#3e74da',
+      'odt': '#3e74da',
+      'pdf': '#d47373',
+      'rtf': '#656ecd',
+      'tex': '#5a5a5b',
+      'txt': '#5a5a5b',
+      'pptx': '#e07066',
+      'mp3': '#eab456',
+      'xls': '#3f9e64',
+      'html': '#2988f0',
+      'htm': '#2988f0',
+      'png': '#f676a6',
+      'jpg': '#f67676',
+      'jpeg': '#f67676',
+      'gif': '#f6af76',
+      'zip': '#4f566f',
+      'rar': '#4f566f',
+      'exe': '#e26f6f',
+      'svg': '#bf5252',
+      'key': '#e07066'
+    };
+  }
+
+  /**
    * Return Block data
    * @param {HTMLElement} toolsContent
    * @return {AttachesToolData}
@@ -142,7 +171,7 @@ export default class AttachesTool {
      * If file was uploaded
      */
     if (this.pluginHasData()) {
-      const title = toolsContent.querySelector(`.${this.CSS.title}`).textContent;
+      const title = toolsContent.querySelector(`.${this.CSS.title}`).innerHTML;
 
       Object.assign(this.data, { title });
     }
@@ -223,7 +252,7 @@ export default class AttachesTool {
           url,
           extension: name.split('.').pop(),
           name,
-          size: (size / 1000).toFixed(1) // size in KB
+          size
         },
         title: name
       };
@@ -243,103 +272,14 @@ export default class AttachesTool {
    */
   appendFileIcon() {
     const extension = this.data.file.extension || '';
-    let extensionColor;
-    let knownExtension = true;
-
-    switch (extension.toLowerCase()) {
-      case 'doc':
-      case 'docx':
-      case 'odt':
-      {
-        extensionColor = '#3e74da';
-        break;
-      }
-      case 'pdf':
-      {
-        extensionColor = '#d47373';
-        break;
-      }
-      case 'rtf':
-      {
-        extensionColor = '#656ecd';
-        break;
-      }
-      case 'tex':
-      case 'txt':
-      {
-        extensionColor = '#5a5a5b';
-        break;
-      }
-      case 'pptx':
-      {
-        extensionColor = '#e07066';
-        break;
-      }
-      case 'mp3':
-      {
-        extensionColor = '#eab456';
-        break;
-      }
-      case 'xls':
-      {
-        extensionColor = '#3f9e64';
-        break;
-      }
-      case 'html':
-      case 'htm':
-      {
-        extensionColor = '#2988f0';
-        break;
-      }
-      case 'png':
-      {
-        extensionColor = '#f676a6';
-        break;
-      }
-      case 'jpg':
-      case 'jpeg':
-      {
-        extensionColor = '#f67676';
-        break;
-      }
-      case 'gif':
-      {
-        extensionColor = '#f6af76';
-        break;
-      }
-      case 'zip':
-      case 'rar':
-      {
-        extensionColor = '#4f566f';
-        break;
-      }
-      case 'exe':
-      {
-        extensionColor = '#e26f6f';
-        break;
-      }
-      case 'svg':
-      {
-        extensionColor = '#bf5252';
-        break;
-      }
-      case 'key':
-      {
-        extensionColor = '#e07066';
-        break;
-      }
-      default: {
-        knownExtension = false;
-      }
-    }
+    const extensionColor = this.EXTENSIONS[extension];
 
     const fileIcon = this.make('div', this.CSS.fileIcon, {
-      innerHTML: knownExtension ? CustomFileIcon : FileIcon
+      innerHTML: extensionColor ? CustomFileIcon : FileIcon
     });
 
-    if (knownExtension) {
+    if (extensionColor) {
       fileIcon.style.color = extensionColor;
-      fileIcon.querySelector('svg').style.fill = extensionColor;
       fileIcon.setAttribute('data-extension', extension);
     }
 
@@ -375,9 +315,20 @@ export default class AttachesTool {
     }
 
     if (size) {
+      let sizePrefix;
+      let formattedSize;
       const fileSize = this.make('div', this.CSS.size);
 
-      fileSize.textContent = size;
+      if (Math.log10(+size) > 5) {
+        sizePrefix = 'MiB';
+        formattedSize = size / Math.pow(2, 20);
+      } else {
+        sizePrefix = 'KiB';
+        formattedSize = size / Math.pow(2, 10);
+      }
+
+      fileSize.textContent = formattedSize.toFixed(1);
+      fileSize.setAttribute('data-size', sizePrefix);
       fileInfo.appendChild(fileSize);
     }
 

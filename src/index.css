@@ -35,13 +35,17 @@
         line-height: 150%;
         content: attr(data-extension);
       }
+
+      svg {
+        fill: currentColor;
+      }
     }
 
     ^&__size {
       color: #7b7e89;
 
       &::after {
-        content: 'kiB';
+        content: attr(data-size);
         margin-left: 0.2em;
       }
     }

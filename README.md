@@ -85,7 +85,7 @@ Object `file` consists of the following fields. All of them are optional, `size`
 | Field          | Type      | Description                       |
 | -------------- | --------- | ----------------------------------|
 | url            |`string`   | Full public path of uploaded file |
-| size           |`number`   | File's size                       |
+| size           |`number`   | File's size (expected in bytes, according to Tool's design)                      |
 | name           |`string`   | File's name                       |
 | extension      |`string`   | File's extension                  |
 
