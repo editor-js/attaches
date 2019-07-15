@@ -147,6 +147,7 @@ export default class AttachesTool {
       'pptx': '#e07066',
       'ppt': '#e07066',
       'mp3': '#eab456',
+      'mp4': '#f676a6',
       'xls': '#3f9e64',
       'html': '#2988f0',
       'htm': '#2988f0',
@@ -161,7 +162,10 @@ export default class AttachesTool {
       'key': '#e07066',
       'sketch': '#df821c',
       'ai': '#df821c',
-      'psd': '#388ae5'
+      'psd': '#388ae5',
+      'dmg': '#e26f6f',
+      'json': '#2988f0',
+      'csv': '#3f9e64'
     };
   }
 
