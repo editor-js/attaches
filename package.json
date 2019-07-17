@@ -1,0 +1,34 @@
+{
+  "name": "attaches",
+  "version": "1.0.0",
+  "repository": "https://github.com/editor-js/attaches",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack --mode production",
+    "build:dev": "webpack --mode development --watch"
+  },
+  "author": {
+    "name": "CodeX",
+    "email": "team@codex.so"
+  },
+  "devDependencies": {
+    "@codexteam/ajax": "^4.0.1",
+    "css-loader": "^0.28.0",
+    "eslint": "^5.9.0",
+    "eslint-config-codex": "github:codex-team/eslint-config",
+    "eslint-loader": "^2.1.1",
+    "extract-text-webpack-plugin": "^2.1.0",
+    "file-loader": "^0.11.1",
+    "formidable": "^1.2.1",
+    "postcss-cssnext": "^2.10.0",
+    "postcss-loader": "^3.0.0",
+    "postcss-nested": "^4.1.2",
+    "postcss-nested-ancestors": "^2.0.0",
+    "postcss-smart-import": "^0.6.12",
+    "request": "^2.88.0",
+    "style-loader": "^0.23.1",
+    "svg-inline-loader": "^0.8.0",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
+  }
+}
