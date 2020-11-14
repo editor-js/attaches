@@ -31,7 +31,7 @@ const AttachesTool = require('@editorjs/attaches');
 
 You can load specific version of package from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/@editorjs/attaches).
 
-`https://cdn.jsdelivr.net/npm/@editorjs/attaches@1.0.0`
+`https://cdn.jsdelivr.net/npm/@editorjs/attaches@latest`
 
 Then require this script on page with Editor.js through the `<script src=""></script>` tag.
 
