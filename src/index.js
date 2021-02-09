@@ -80,7 +80,8 @@ export default class AttachesTool {
       field: config.field || 'file',
       types: config.types || '*',
       buttonText: config.buttonText || 'Select file to upload',
-      errorMessage: config.errorMessage || 'File upload failed'
+      errorMessage: config.errorMessage || 'File upload failed',
+      additionalRequestHeaders: config.additionalRequestHeaders || {}
     };
 
     this.data = data;
