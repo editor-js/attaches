@@ -45,6 +45,7 @@ const LOADER_TIMEOUT = 500;
  * @property {string} types - available mime-types
  * @property {string} placeholder
  * @property {string} errorMessage
+ * @property {boolean} uuidSupport Defines if the returned url containes a uuid as fileName, if so than append the actual fileName to the url.
  */
 
 /**
@@ -80,7 +81,8 @@ export default class AttachesTool {
       field: config.field || 'file',
       types: config.types || '*',
       buttonText: config.buttonText || 'Select file to upload',
-      errorMessage: config.errorMessage || 'File upload failed'
+      errorMessage: config.errorMessage || 'File upload failed',
+      uuidSupport: config.uuidSupport || false
     };
 
     this.data = data;
@@ -107,6 +109,14 @@ export default class AttachesTool {
       icon: Icon,
       title: 'Attaches'
     };
+  }
+
+  /**
+   * Notify core that read-only mode is supported
+   * @returns {boolean}
+   */
+  static get isReadOnlySupported() {
+    return true;
   }
 
   /**
@@ -165,7 +175,8 @@ export default class AttachesTool {
       psd: '#388ae5',
       dmg: '#e26f6f',
       json: '#2988f0',
-      csv: '#3f9e64'
+      csv: '#3f9e64',
+      md: '#8d9e3f'
     };
   }
 
@@ -344,7 +355,7 @@ export default class AttachesTool {
 
     const downloadIcon = this.make('a', this.CSS.downloadButton, {
       innerHTML: DownloadIcon,
-      href: url,
+      href: this.config.uuidSupport ? (url + '/' + title) : url,
       target: '_blank',
       rel: 'nofollow noindex noreferrer'
     });
