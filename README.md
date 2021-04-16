@@ -68,7 +68,7 @@ Attaches Tool supports these configuration parameters:
 | types | `string` | (default: `*`) Mime-types of files that can be [accepted with file selection](https://github.com/codex-team/ajax#accept-string).|
 | buttonText | `string` | (default: `Select file`) Placeholder for file upload button |
 | errorMessage | `string` | (default: `File upload failed`) Message to show if file upload failed |
-
+| uuidSupport | `boolean` | (default: `false` ) Defines if the returned url containes a uuid as fileName, if so than append the actual fileName to the url. The Backend needs to accept the second url parameter and use that in the reponse as the fileName, otherwise the uuid is the fileName which gets displayed to the user.  |
 
 ## Output data
 
