@@ -1,5 +1,7 @@
 import './index.css';
 import Uploader from './uploader';
+import CustomUploader from './custom-uploader';
+
 import Icon from './svg/toolbox.svg';
 import FileIcon from './svg/standard.svg';
 import CustomFileIcon from './svg/custom.svg';
@@ -38,6 +40,12 @@ const LOADER_TIMEOUT = 500;
  */
 
 /**
+ * @typedef {object} CustomUploaderConfig
+ * @description Config object to provide custom upload functionality
+ * @property {function(File)} uploadByFile api to upload a File object
+ */
+
+/**
  * @typedef {object} AttachesToolConfig
  * @description Config supported by Tool
  * @property {string} endpoint - file upload url
@@ -45,6 +53,7 @@ const LOADER_TIMEOUT = 500;
  * @property {string} types - available mime-types
  * @property {string} placeholder
  * @property {string} errorMessage
+ * @property {CustomUploaderConfig} uploader
  */
 
 /**
@@ -77,6 +86,7 @@ export default class AttachesTool {
 
     this.config = {
       endpoint: config.endpoint || '',
+      uploader: config.uploader || null,
       field: config.field || 'file',
       types: config.types || '*',
       buttonText: config.buttonText || 'Select file to upload',
@@ -88,11 +98,15 @@ export default class AttachesTool {
     /**
      * Module for files uploading
      */
-    this.uploader = new Uploader({
+    const uploaderConfig = {
       config: this.config,
       onUpload: (response) => this.onUpload(response),
       onError: (error) => this.uploadingFailed(error)
-    });
+    };
+
+    this.uploader = this.config.uploader
+      ? new CustomUploader(uploaderConfig)
+      : new Uploader(uploaderConfig);
 
     this.enableFileUpload = this.enableFileUpload.bind(this);
   }

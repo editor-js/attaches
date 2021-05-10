@@ -1,12 +1,17 @@
+const path = require('path');
+
 module.exports = {
   entry: './src/index.js',
   output: {
-    path: __dirname + '/dist',
+    path: path.join(__dirname, 'dist'),
     publicPath: '/',
     filename: 'bundle.js',
     library: 'AttachesTool',
     libraryTarget: 'umd',
     libraryExport: 'default'
+  },
+  optimization : {
+    minimize : false,
   },
   module: {
     rules: [
@@ -16,7 +21,7 @@ module.exports = {
         use: [
           {
             loader: 'babel-loader',
-            query: {
+            options: {
               presets: [ '@babel/preset-env' ]
             }
           },
@@ -36,17 +41,22 @@ module.exports = {
           {
             loader: 'postcss-loader',
             options: {
-              plugins: [
-                require('postcss-nested-ancestors'),
-                require('postcss-nested')
-              ]
+              postcssOptions: {
+                plugins: [
+                  'postcss-nested-ancestors',
+                  'postcss-nested'
+                ]
+              }
             }
           }
         ]
       },
       {
         test: /\.svg$/,
-        loader: 'svg-inline-loader?removeSVGTagAttrs=false'
+        loader: 'svg-inline-loader',
+        options: {
+          removeSVGTagAttrs: false
+        }
       }
     ]
   }
