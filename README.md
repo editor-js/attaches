@@ -1,8 +1,11 @@
+> This fork is meant to provide custom uploader functionality as in @editorjs/image
+ 
 ![](https://badgen.net/badge/Editor.js/v2.0/blue)
 # Attaches Tool
 Attaches Tool for the [Editor.js](https://codex.so/editor).
 
 This tool allows you to attach files to your articles.
+
 
 ![Example](https://capella.pics/7b63cffe-9214-40f4-9009-0637970a4630.jpg)
 
