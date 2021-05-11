@@ -10,9 +10,6 @@ module.exports = {
     libraryTarget: 'umd',
     libraryExport: 'default'
   },
-  optimization : {
-    minimize : false,
-  },
   module: {
     rules: [
       {
