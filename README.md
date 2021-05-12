@@ -1,8 +1,11 @@
+> This fork is meant to provide custom uploader functionality as in @editorjs/image
+ 
 ![](https://badgen.net/badge/Editor.js/v2.0/blue)
 # Attaches Tool
 Attaches Tool for the [Editor.js](https://codex.so/editor).
 
 This tool allows you to attach files to your articles.
+
 
 ![Example](https://capella.pics/7b63cffe-9214-40f4-9009-0637970a4630.jpg)
 
@@ -122,3 +125,41 @@ Response of your uploader **should** cover following format:
 
 **file** - uploaded file data.
 Can contain data you want to store. Fields `url`, `name`, `size`, and `extension` if present will be written to [file object](#file-object). Fields size and extension are supported by design.
+
+## Custom uploader
+
+For greater control over the upload process it's possible to use a delegate hook:
+
+```javascript
+var editor = EditorJS({
+  ...
+
+  tools: {
+    ...
+    attaches: {
+      class: AttachesTool,
+      config: {
+        uploader: {
+          uploadByFile : async (file:File) => {
+            try {
+            const result = await myUploadFunction(file);
+            return {
+              success : true,
+              file : {
+                url : result.url,
+                name : result.fileName,
+                size : result.size
+              }
+            };
+
+          } catch (e) {
+            return Promise.reject({error : e.message});
+          }
+        }
+      }
+    }
+  }
+
+  ...
+});
+```
