@@ -267,14 +267,15 @@ export default class AttachesTool {
     const body = response.body;
 
     if (body.success && body.file) {
-      const { url, name, size } = body.file;
+      const { url, name, size, ...rest } = body.file;
 
       this.data = {
         file: {
           url,
           extension: name.split('.').pop(),
           name,
-          size
+          size,
+          ...rest
         },
         title: name
       };
