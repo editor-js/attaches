@@ -21,22 +21,18 @@ export default class Uploader {
    * @param {function} onPreview - callback fired when preview is ready
    */
   uploadSelectedFile({ onPreview }) {
-    ajax
-      .transport({
-        url: this.config.endpoint,
-        accept: this.config.types,
-        beforeSend: () => onPreview(),
-        fieldName: this.config.field,
-        headers: this.config.additionalRequestHeaders || {}
-      })
-      .then((response) => {
-        this.onUpload(response);
-      })
-      .catch((error) => {
-        const message =
-          error && error.message ? error.message : this.config.errorMessage;
+    ajax.transport({
+      url: this.config.endpoint,
+      accept: this.config.types,
+      beforeSend: () => onPreview(),
+      fieldName: this.config.field,
+      headers: this.config.additionalRequestHeaders || {}
+    }).then((response) => {
+      this.onUpload(response);
+    }).catch((error) => {
+      const message = (error && error.message) ? error.message : this.config.errorMessage;
 
-        this.onError(message);
-      });
+      this.onError(message);
+    });
   }
 }

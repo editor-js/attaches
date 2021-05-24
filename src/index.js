@@ -80,7 +80,7 @@ export default class AttachesTool {
       field: config.field || 'file',
       types: config.types || '*',
       buttonText: config.buttonText || 'Select file to upload',
-      errorMessage: config.errorMessage || 'File upload failed',
+      errorMessage: config.errorMessage || 'File upload failed', 
       additionalRequestHeaders: config.additionalRequestHeaders || {}
     };
 
@@ -232,10 +232,7 @@ export default class AttachesTool {
    * @return {boolean}
    */
   pluginHasData() {
-    return (
-      this.data.title !== '' ||
-      Object.values(this.data.file).some((item) => item !== undefined)
-    );
+    return this.data.title !== '' || Object.values(this.data.file).some(item => item !== undefined);
   }
 
   /**
@@ -244,10 +241,7 @@ export default class AttachesTool {
   enableFileUpload() {
     this.uploader.uploadSelectedFile({
       onPreview: () => {
-        this.nodes.wrapper.classList.add(
-          this.CSS.wrapperLoading,
-          this.CSS.loader
-        );
+        this.nodes.wrapper.classList.add(this.CSS.wrapperLoading, this.CSS.loader);
       }
     });
   }
@@ -305,14 +299,7 @@ export default class AttachesTool {
    * Removes tool's loader
    */
   removeLoader() {
-    setTimeout(
-      () =>
-        this.nodes.wrapper.classList.remove(
-          this.CSS.wrapperLoading,
-          this.CSS.loader
-        ),
-      LOADER_TIMEOUT
-    );
+    setTimeout(() => this.nodes.wrapper.classList.remove(this.CSS.wrapperLoading, this.CSS.loader), LOADER_TIMEOUT);
   }
 
   /**
@@ -321,10 +308,7 @@ export default class AttachesTool {
   showFileData() {
     this.nodes.wrapper.classList.add(this.CSS.wrapperWithFile);
 
-    const {
-      file: { size, url },
-      title
-    } = this.data;
+    const { file: { size, url }, title } = this.data;
 
     this.appendFileIcon();
 
@@ -395,18 +379,15 @@ export default class AttachesTool {
    * @param {AttachesToolData} data
    */
   set data({ file, title }) {
-    this._data = Object.assign(
-      {},
-      {
-        file: {
-          url: (file && file.url) || this._data.file.url,
-          name: (file && file.name) || this._data.file.name,
-          extension: (file && file.extension) || this._data.file.extension,
-          size: (file && file.size) || this._data.file.size
-        },
-        title: title || this._data.title
-      }
-    );
+    this._data = Object.assign({}, {
+      file: {
+        url: (file && file.url) || this._data.file.url,
+        name: (file && file.name) || this._data.file.name,
+        extension: (file && file.extension) || this._data.file.extension,
+        size: (file && file.size) || this._data.file.size
+      },
+      title: title || this._data.title
+    });
   }
 
   /**
