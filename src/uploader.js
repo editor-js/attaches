@@ -1,4 +1,4 @@
-import ajax from "@codexteam/ajax";
+import ajax from '@codexteam/ajax';
 
 /**
  * Module for file uploading.
@@ -27,7 +27,7 @@ export default class Uploader {
         accept: this.config.types,
         beforeSend: () => onPreview(),
         fieldName: this.config.field,
-        headers: this.config.additionalRequestHeaders || {},
+        headers: this.config.additionalRequestHeaders || {}
       })
       .then((response) => {
         this.onUpload(response);
