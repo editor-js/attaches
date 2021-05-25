@@ -68,6 +68,7 @@ Attaches Tool supports these configuration parameters:
 | types | `string` | (default: `*`) Mime-types of files that can be [accepted with file selection](https://github.com/codex-team/ajax#accept-string).|
 | buttonText | `string` | (default: `Select file`) Placeholder for file upload button |
 | errorMessage | `string` | (default: `File upload failed`) Message to show if file upload failed |
+| additionalRequestHeaders | `object` | (default: `{}`) Object with any custom headers which will be added to request. Example: `{"X-CSRF-TOKEN": "W5fe2...hR8d1"}` |
 
 
 ## Output data

@@ -25,7 +25,8 @@ export default class Uploader {
       url: this.config.endpoint,
       accept: this.config.types,
       beforeSend: () => onPreview(),
-      fieldName: this.config.field
+      fieldName: this.config.field,
+      headers: this.config.additionalRequestHeaders || {},
     }).then((response) => {
       this.onUpload(response);
     }).catch((error) => {
