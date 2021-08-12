@@ -45,6 +45,8 @@ const LOADER_TIMEOUT = 500;
  * @property {string} types - available mime-types
  * @property {string} placeholder
  * @property {string} errorMessage
+ * @property {object} [uploader] - optional custom uploader
+ * @property {function(File): Promise.<UploadResponseFormat>} [uploader.uploadByFile] - custom method that upload file and returns response
  */
 
 /**
@@ -81,6 +83,7 @@ export default class AttachesTool {
       types: config.types || '*',
       buttonText: config.buttonText || 'Select file to upload',
       errorMessage: config.errorMessage || 'File upload failed',
+      uploader: config.uploader || undefined,
       additionalRequestHeaders: config.additionalRequestHeaders || {}
     };
 
@@ -251,10 +254,10 @@ export default class AttachesTool {
    * @param {UploadResponseFormat} response
    */
   onUpload(response) {
-    const body = response.body;
+    const body = response;
 
     if (body.success && body.file) {
-      const { url, name, size } = body.file;
+      const { url, name, size, title } = body.file;
 
       this.data = {
         file: {
@@ -263,7 +266,7 @@ export default class AttachesTool {
           name,
           size
         },
-        title: title
+        title
       };
 
       this.nodes.button.remove();
