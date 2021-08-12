@@ -263,7 +263,7 @@ export default class AttachesTool {
           name,
           size
         },
-        title: name
+        title: title
       };
 
       this.nodes.button.remove();
