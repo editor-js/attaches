@@ -254,7 +254,7 @@ export default class AttachesTool {
     const body = response.body;
 
     if (body.success && body.file) {
-      const { url, name, size } = body.file;
+      const { url, name, size, title } = body.file;
 
       this.data = {
         file: {
@@ -263,7 +263,7 @@ export default class AttachesTool {
           name,
           size
         },
-        title: title
+        title
       };
 
       this.nodes.button.remove();
