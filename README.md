@@ -64,6 +64,7 @@ Attaches Tool supports these configuration parameters:
 | Field | Type     | Description        |
 | ----- | -------- | ------------------ |
 | endpoint | `string` | **Required:** endpoint for file uploading. |
+| uploader.uplodByFile | `function` | custom upload function `uploader:{uploadByFile(file){return ...//logic here}}`|
 | field | `string` | (default: `file`) Name of uploaded file field in POST request |
 | types | `string` | (default: `*`) Mime-types of files that can be [accepted with file selection](https://github.com/codex-team/ajax#accept-string).|
 | buttonText | `string` | (default: `Select file`) Placeholder for file upload button |
@@ -114,7 +115,7 @@ Response of your uploader **should** cover following format:
     "success" : 1,
     "file": {
         // any data you want 
-        // for example: url, name, size
+        // for example: url, name, size, title
     }
 }
 ```
