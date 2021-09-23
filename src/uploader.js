@@ -29,8 +29,8 @@ export default class Uploader {
 
     // custom uploading
     if (this.config.uploader && typeof this.config.uploader.uploadByFile === 'function') {
-      onPreview();
       upload = ajax.selectFiles({ accept: this.config.types }).then((files) => {
+        onPreview();
         const customUpload = this.config.uploader.uploadByFile(files[0]);
 
         if (!isPromise(customUpload)) {
@@ -48,12 +48,13 @@ export default class Uploader {
         beforeSend: () => onPreview(),
         fieldName: this.config.field,
         headers: this.config.additionalRequestHeaders || {}
-      }).then((response) => response);
+      }).then((response) => response.body);
     }
 
     upload.then((response) => {
       this.onUpload(response);
     }).catch((error) => {
+      console.warn(error);
       const message = (error && error.message) ? error.message : this.config.errorMessage;
 
       this.onError(message);

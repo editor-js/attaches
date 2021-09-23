@@ -254,7 +254,7 @@ export default class AttachesTool {
    * @param {UploadResponseFormat} response
    */
   onUpload(response) {
-    const body = response.body;
+    const body = response;
 
     if (body.success && body.file) {
       const { url, name, size, title } = body.file;
