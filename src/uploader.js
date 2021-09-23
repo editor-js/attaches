@@ -29,6 +29,7 @@ export default class Uploader {
 
     // custom uploading
     if (this.config.uploader && typeof this.config.uploader.uploadByFile === 'function') {
+      onPreview();
       upload = ajax.selectFiles({ accept: this.config.types }).then((files) => {
         const customUpload = this.config.uploader.uploadByFile(files[0]);
 
@@ -41,20 +42,22 @@ export default class Uploader {
 
       // default uploading
     } else {
-      ajax.transport({
+      upload = ajax.transport({
         url: this.config.endpoint,
         accept: this.config.types,
         beforeSend: () => onPreview(),
         fieldName: this.config.field,
         headers: this.config.additionalRequestHeaders || {}
-      }).then((response) => {
-        this.onUpload(response);
-      }).catch((error) => {
-        const message = (error && error.message) ? error.message : this.config.errorMessage;
-
-        this.onError(message);
-      });
+      }).then((response) => response);
     }
+
+    upload.then((response) => {
+      this.onUpload(response);
+    }).catch((error) => {
+      const message = (error && error.message) ? error.message : this.config.errorMessage;
+
+      this.onError(message);
+    });
   }
 }
 /**
