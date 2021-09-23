@@ -45,6 +45,8 @@ const LOADER_TIMEOUT = 500;
  * @property {string} types - available mime-types
  * @property {string} placeholder
  * @property {string} errorMessage
+ * @property {object} [uploader] - optional custom uploader
+ * @property {function(File): Promise.<UploadResponseFormat>} [uploader.uploadByFile] - custom method that upload file and returns response
  */
 
 /**
@@ -81,6 +83,7 @@ export default class AttachesTool {
       types: config.types || '*',
       buttonText: config.buttonText || 'Select file to upload',
       errorMessage: config.errorMessage || 'File upload failed',
+      uploader: config.uploader || undefined,
       additionalRequestHeaders: config.additionalRequestHeaders || {}
     };
 
