@@ -21,7 +21,6 @@ export default class Uploader {
    * @param {function} onPreview - callback fired when preview is ready
    */
   uploadSelectedFile({ onPreview }) {
-
     /**
      * Custom uploading
      * or default uploading
@@ -31,7 +30,6 @@ export default class Uploader {
     // custom uploading
     if (this.config.uploader && typeof this.config.uploader.uploadByFile === 'function') {
       upload = ajax.selectFiles({ accept: this.config.types }).then((files) => {
-       
         const customUpload = this.config.uploader.uploadByFile(files[0]);
 
         if (!isPromise(customUpload)) {
@@ -48,7 +46,7 @@ export default class Uploader {
         accept: this.config.types,
         beforeSend: () => onPreview(),
         fieldName: this.config.field,
-        headers: this.config.additionalRequestHeaders || {},
+        headers: this.config.additionalRequestHeaders || {}
       }).then((response) => {
         this.onUpload(response);
       }).catch((error) => {
@@ -58,4 +56,13 @@ export default class Uploader {
       });
     }
   }
+}
+/**
+ * Check if passed object is a Promise
+ *
+ * @param  {*}  object - object to check
+ * @returns {boolean}
+ */
+function isPromise(object) {
+  return object && typeof object.then === 'function';
 }
