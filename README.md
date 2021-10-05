@@ -63,8 +63,8 @@ Attaches Tool supports these configuration parameters:
 
 | Field | Type     | Description        |
 | ----- | -------- | ------------------ |
-| endpoint | `string` | **Required:** endpoint for file uploading. |
-| uploader | `{uploadByFile: function}` |Optional custom uploading methods|
+| endpoint | `string` | Optional endpoint for file uploading or use uploader |
+| uploader | `{uploadByFile: function}` |Optional custom uploading method or use endpoint|
 | field | `string` | (default: `file`) Name of uploaded file field in POST request |
 | types | `string` | (default: `*`) Mime-types of files that can be [accepted with file selection](https://github.com/codex-team/ajax#accept-string).|
 | buttonText | `string` | (default: `Select file`) Placeholder for file upload button |
@@ -124,3 +124,57 @@ Response of your uploader **should** cover following format:
 
 **file** - uploaded file data.
 Can contain data you want to store. Fields `url`, `name`, `size`, and `extension` if present will be written to [file object](#file-object). Fields size and extension are supported by design.
+
+## Providing custom uploading methods
+
+As mentioned at the Config Params section, you have an ability to provide own custom uploading method.
+It is a quite simple: implement `uploadByFile` method and pass them via `uploader` config param.
+The method return a Promise that resolves with response in a format that described at the [backend response format](#backend-response-format) section.
+
+
+| Method         | Arguments | Return value | Description |
+| -------------- | --------- | -------------| ------------|
+| uploadByFile   | `File`    | `{Promise.<{success, file: {url}}>}` | Upload file to the server and return an uploaded file data |
+
+Example:
+
+```js
+import AttachesTool from '@editorjs/attaches';
+
+var editor = EditorJS({
+  ...
+
+  tools: {
+    ...
+    attaches: {
+      class: AttachesTool,
+      config: {
+        /**
+         * Custom uploader
+         */
+        uploader: {
+          /**
+           * Upload file to the server and return an uploaded image data
+           * @param {File} file - file selected from the device or pasted by drag-n-drop
+           * @return {Promise.<{success, file: {url}}>}
+           */
+          uploadByFile(file){
+            // your own uploading logic here
+            return MyAjax.upload(file).then((response) => {
+              return {
+                success: 1,
+                file: {
+                  url: response.fileurl,
+                  // any data you want 
+                  // for example: name, size, title
+                }
+              };
+            });
+          },
+        }
+      }
+    }
+  }
+  ...
+});
+```
