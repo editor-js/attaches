@@ -53,7 +53,9 @@ export default class Uploader {
 
     upload.then((response) => {
       this.onUpload(response);
-    }).catch((error) => {
+    }).catch((errorResponse) => {
+      const error = errorResponse.body;
+
       const message = (error && error.message) ? error.message : this.config.errorMessage;
 
       this.onError(message);

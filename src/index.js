@@ -1,4 +1,4 @@
-import './index.css';
+import './index.pcss';
 import Uploader from './uploader';
 import Icon from './svg/toolbox.svg';
 import FileIcon from './svg/standard.svg';
@@ -171,6 +171,22 @@ export default class AttachesTool {
       json: '#2988f0',
       csv: '#3f9e64'
     };
+  }
+
+  /**
+   * Validate block data:
+   * - check for emptiness
+   *
+   * @param {AttachesToolData} savedData — data received after saving
+   * @returns {boolean} false if saved data is not correct, otherwise true
+   * @public
+   */
+  validate(savedData) {
+    if (!savedData.file.url) {
+      return false;
+    }
+
+    return true;
   }
 
   /**
