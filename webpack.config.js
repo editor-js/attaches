@@ -1,3 +1,5 @@
+const ESLintPlugin = require('eslint-webpack-plugin');
+
 module.exports = {
   entry: './src/index.js',
   output: {
@@ -19,29 +21,21 @@ module.exports = {
             query: {
               presets: [ '@babel/preset-env' ]
             }
-          },
-          {
-            loader: 'eslint-loader',
-            options: {
-              fix: true
-            }
           }
         ]
       },
       {
-        test: /\.p?css$/,
+        test: /\.(pcss|css)$/,
         use: [
           'style-loader',
           'css-loader',
           {
             loader: 'postcss-loader',
             options: {
-              postcssOptions: {
-                plugins: [
-                  'postcss-nested-ancestors',
-                  'postcss-nested'
-                ]
-              }
+              plugins: [
+                require('postcss-nested-ancestors'),
+                require('postcss-nested')
+              ]
             }
           }
         ]
@@ -51,5 +45,10 @@ module.exports = {
         loader: 'svg-inline-loader?removeSVGTagAttrs=false'
       }
     ]
-  }
+  },
+  plugins: [
+      new ESLintPlugin({
+
+      })
+  ],
 };
