@@ -285,11 +285,11 @@ export default class AttachesTool {
       this.data = {
         file: {
           url,
-          extension: name.split('.').pop(),
+          extension: name ? name.split('.').pop() : '',
           name,
-          size
+          size,
         },
-        title
+        title,
       };
 
       this.nodes.button.remove();
