@@ -1,9 +1,11 @@
-import './index.css';
+import './index.pcss';
+
 import Uploader from './uploader';
 import Icon from './svg/toolbox.svg';
 import FileIcon from './svg/standard.svg';
 import CustomFileIcon from './svg/custom.svg';
 import DownloadIcon from './svg/arrow-download.svg';
+
 const LOADER_TIMEOUT = 500;
 
 /**
@@ -60,7 +62,7 @@ const LOADER_TIMEOUT = 500;
 export default class AttachesTool {
   /**
    * @param {AttachesToolData} data
-   * @param {Object} config
+   * @param {object} config
    * @param {API} api
    */
   constructor({ data, config, api }) {
@@ -174,9 +176,26 @@ export default class AttachesTool {
   }
 
   /**
+   * Validate block data:
+   * - check for emptiness
+   *
+   * @param {AttachesToolData} savedData — data received after saving
+   * @returns {boolean} false if saved data is not correct, otherwise true
+   * @public
+   */
+  validate(savedData) {
+    if (!savedData.file.url) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
    * Return Block data
+   *
    * @param {HTMLElement} toolsContent
-   * @return {AttachesToolData}
+   * @returns {AttachesToolData}
    */
   save(toolsContent) {
     /**
@@ -193,7 +212,8 @@ export default class AttachesTool {
 
   /**
    * Renders Block content
-   * @return {HTMLDivElement}
+   *
+   * @returns {HTMLDivElement}
    */
   render() {
     const holder = this.make('div', this.CSS.baseClass);
@@ -224,6 +244,7 @@ export default class AttachesTool {
   /**
    * Fires after clicks on the Toolbox AttachesTool Icon
    * Initiates click on the Select File button
+   *
    * @public
    */
   appendCallback() {
@@ -232,7 +253,8 @@ export default class AttachesTool {
 
   /**
    * Checks if any of Tool's fields have data
-   * @return {boolean}
+   *
+   * @returns {boolean}
    */
   pluginHasData() {
     return this.data.title !== '' || Object.values(this.data.file).some(item => item !== undefined);
@@ -251,6 +273,7 @@ export default class AttachesTool {
 
   /**
    * File uploading callback
+   *
    * @param {UploadResponseFormat} response
    */
   onUpload(response) {
@@ -262,11 +285,11 @@ export default class AttachesTool {
       this.data = {
         file: {
           url,
-          extension: name.split('.').pop(),
+          extension: name ? name.split('.').pop() : '',
           name,
-          size
+          size,
         },
-        title
+        title,
       };
 
       this.nodes.button.remove();
@@ -358,6 +381,7 @@ export default class AttachesTool {
 
   /**
    * If file uploading failed, remove loader and show notification
+   *
    * @param {string} errorMessage -  error message
    */
   uploadingFailed(errorMessage) {
@@ -371,7 +395,8 @@ export default class AttachesTool {
 
   /**
    * Return Attaches Tool's data
-   * @return {AttachesToolData}
+   *
+   * @returns {AttachesToolData}
    */
   get data() {
     return this._data;
@@ -379,6 +404,7 @@ export default class AttachesTool {
 
   /**
    * Stores all Tool's data
+   *
    * @param {AttachesToolData} data
    */
   set data({ file, title }) {
@@ -395,6 +421,7 @@ export default class AttachesTool {
 
   /**
    * Moves caret to the end of contentEditable element
+   *
    * @param {HTMLElement} element - contentEditable element
    */
   moveCaretToEnd(element) {
@@ -409,10 +436,11 @@ export default class AttachesTool {
 
   /**
    * Helper method for elements creation
+   *
    * @param tagName
    * @param classNames
    * @param attributes
-   * @return {HTMLElement}
+   * @returns {HTMLElement}
    */
   make(tagName, classNames = null, attributes = {}) {
     const el = document.createElement(tagName);
