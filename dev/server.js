@@ -79,24 +79,24 @@ class ServerExample {
     };
 
     this.getForm(request)
-        .then(({ files }) => {
-          let file = files[this.fieldName] || {};
+      .then(({ files }) => {
+        let file = files[this.fieldName] || {};
 
-          responseJson.success = 1;
-          responseJson.file = {
-            url: file.path,
-            name: file.name,
-            size: file.size,
-            title: file.name,
-          };
-        })
-        .catch((error) => {
-          console.log('Uploading error', error);
-        })
-        .finally(() => {
-          response.writeHead(200, { 'Content-Type': 'application/json' });
-          response.end(JSON.stringify(responseJson));
-        });
+        responseJson.success = 1;
+        responseJson.file = {
+          url: file.path,
+          name: file.name,
+          size: file.size,
+          title: file.name,
+        };
+      })
+      .catch((error) => {
+        console.log('Uploading error', error);
+      })
+      .finally(() => {
+        response.writeHead(200, { 'Content-Type': 'application/json' });
+        response.end(JSON.stringify(responseJson));
+      });
   }
 
   /**
