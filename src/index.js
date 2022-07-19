@@ -45,26 +45,29 @@ const LOADER_TIMEOUT = 500;
  * @property {string} endpoint - file upload url
  * @property {string} field - field name for uploaded file
  * @property {string} types - available mime-types
- * @property {string} placeholder
- * @property {string} errorMessage
+ * @property {string} errorMessage - message to show if file uploading failed
  * @property {object} [uploader] - optional custom uploader
  * @property {function(File): Promise.<UploadResponseFormat>} [uploader.uploadByFile] - custom method that upload file and returns response
  */
 
 /**
+ * @typedef {object} EditorAPI
+ * @property {object} styles - Styles API {@link https://github.com/codex-team/editor.js/blob/next/types/api/styles.d.ts}
+ * @property {object} i18n - Internationalization API {@link https://github.com/codex-team/editor.js/blob/next/types/api/i18n.d.ts}
+ * @property {object} notifier - Notifier API {@link https://github.com/codex-team/editor.js/blob/next/types/api/notifier.d.ts}
+ */
+
+/**
  * @class AttachesTool
  * @classdesc AttachesTool for Editor.js 2.0
- *
- * @property {API} api - Editor.js API
- * @property {AttachesToolData} data
- * @property {AttachesToolConfig} config
  */
 export default class AttachesTool {
   /**
-   * @param {AttachesToolData} data
-   * @param {object} config
-   * @param {API} api
-   * @param {boolean} readOnly - flag indicates whether the Read-Only mode enabled or not
+   * @param {object} options - tool constructor options
+   * @param {AttachesToolData} [options.data] - previously saved data
+   * @param {AttachesToolConfig} options.config - user defined config
+   * @param {EditorAPI} options.api - Editor.js API
+   * @param {boolean} options.readOnly - flag indicates whether the Read-Only mode enabled or not
    */
   constructor({ data, config, api, readOnly }) {
     this.api = api;
@@ -111,6 +114,8 @@ export default class AttachesTool {
    * Get Tool toolbox settings
    * icon - Tool icon's SVG
    * title - title to show in toolbox
+   *
+   * @returns {{icon: string, title: string}}
    */
   static get toolbox() {
     return {
@@ -130,6 +135,8 @@ export default class AttachesTool {
 
   /**
    * Tool's CSS classes
+   *
+   * @returns {object}
    */
   get CSS() {
     return {
@@ -155,6 +162,8 @@ export default class AttachesTool {
 
   /**
    * Possible files' extension colors
+   *
+   * @returns {object}
    */
   get EXTENSIONS() {
     return {
@@ -209,7 +218,7 @@ export default class AttachesTool {
   /**
    * Return Block data
    *
-   * @param {HTMLElement} toolsContent
+   * @param {HTMLElement} toolsContent - block main element returned by the render method
    * @returns {AttachesToolData}
    */
   save(toolsContent) {
@@ -297,7 +306,7 @@ export default class AttachesTool {
   /**
    * File uploading callback
    *
-   * @param {UploadResponseFormat} response
+   * @param {UploadResponseFormat} response - server returned data
    */
   onUpload(response) {
     const body = response;
@@ -327,7 +336,7 @@ export default class AttachesTool {
   /**
    * Handles uploaded file's extension and appends corresponding icon
    *
-   * @param {Record<string, string | number | boolean>} file - uploaded file data got from the backend. Could contain any fields.
+   * @param {object<string, string | number | boolean>} file - uploaded file data got from the backend. Could contain any fields.
    */
   appendFileIcon(file) {
     const extensionProvided = file.extension;
@@ -461,7 +470,7 @@ export default class AttachesTool {
   /**
    * Stores all Tool's data
    *
-   * @param {AttachesToolData} data
+   * @param {AttachesToolData} data - data to set
    */
   set data({ file, title }) {
     this._data = {

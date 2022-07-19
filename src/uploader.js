@@ -1,16 +1,18 @@
 import ajax from '@codexteam/ajax';
 
 /**
+ * @typedef AttachesToolConfig
+ */
+
+/**
  * Module for file uploading.
  */
 export default class Uploader {
   /**
-   * @param config.config
-   * @param {object} config
-   * @param {Function} onUpload - callback for successful file upload
-   * @param {Function} onError - callback for uploading errors
-   * @param config.onUpload
-   * @param config.onError
+   * @param {object} options - constructor params
+   * @param {AttachesToolConfig} options.config - user defined configuration
+   * @param {Function} options.onUpload - callback for successful file upload
+   * @param {Function} options.onError - callback for uploading errors
    */
   constructor({ config, onUpload, onError }) {
     this.config = config;
@@ -21,7 +23,6 @@ export default class Uploader {
   /**
    * Handle clicks on the upload file button
    *
-   * @fires ajax.transport()
    * @param {Function} onPreview - callback fired when preview is ready
    */
   uploadSelectedFile({ onPreview }) {
@@ -51,7 +52,7 @@ export default class Uploader {
         accept: this.config.types,
         beforeSend: () => onPreview(),
         fieldName: this.config.field,
-        headers: this.config.additionalRequestHeaders || {}
+        headers: this.config.additionalRequestHeaders || {},
       }).then((response) => response.body);
     }
 

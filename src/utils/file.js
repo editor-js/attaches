@@ -4,7 +4,7 @@
  * @param {string|undefined} name  - file name to process
  * @returns {string}
  */
-export function getExtensionFromFileName(name){
+export function getExtensionFromFileName(name) {
   if (name === undefined) {
     return '';
   }
