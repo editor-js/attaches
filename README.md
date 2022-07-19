@@ -4,7 +4,7 @@ Tool for the [Editor.js](https://editorjs.io).
 
 This tool allows you to attach files to your articles.
 
-![Example of the Attach tool look](https://user-images.githubusercontent.com/3684889/179841829-8d333be3-f94b-4a7a-b43b-4153e199b71b.png)
+![Example of the Attach tool look](https://user-images.githubusercontent.com/3684889/179849070-1af9678b-34fb-4485-860e-39f3b0d26c3e.png)
 
 ## Installation
 
