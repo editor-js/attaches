@@ -45,26 +45,29 @@ const LOADER_TIMEOUT = 500;
  * @property {string} endpoint - file upload url
  * @property {string} field - field name for uploaded file
  * @property {string} types - available mime-types
- * @property {string} placeholder
- * @property {string} errorMessage
+ * @property {string} errorMessage - message to show if file uploading failed
  * @property {object} [uploader] - optional custom uploader
  * @property {function(File): Promise.<UploadResponseFormat>} [uploader.uploadByFile] - custom method that upload file and returns response
  */
 
 /**
+ * @typedef {object} EditorAPI
+ * @property {object} styles - Styles API {@link https://github.com/codex-team/editor.js/blob/next/types/api/styles.d.ts}
+ * @property {object} i18n - Internationalization API {@link https://github.com/codex-team/editor.js/blob/next/types/api/i18n.d.ts}
+ * @property {object} notifier - Notifier API {@link https://github.com/codex-team/editor.js/blob/next/types/api/notifier.d.ts}
+ */
+
+/**
  * @class AttachesTool
  * @classdesc AttachesTool for Editor.js 2.0
- *
- * @property {API} api - Editor.js API
- * @property {AttachesToolData} data
- * @property {AttachesToolConfig} config
  */
 export default class AttachesTool {
   /**
-   * @param {AttachesToolData} data
-   * @param {object} config
-   * @param {API} api
-   * @param {boolean} readOnly - flag indicates whether the Read-Only mode enabled or not
+   * @param {object} options - tool constructor options
+   * @param {AttachesToolData} [options.data] - previously saved data
+   * @param {AttachesToolConfig} options.config - user defined config
+   * @param {EditorAPI} options.api - Editor.js API
+   * @param {boolean} options.readOnly - flag indicates whether the Read-Only mode enabled or not
    */
   constructor({ data, config, api, readOnly }) {
     this.api = api;
@@ -73,12 +76,12 @@ export default class AttachesTool {
     this.nodes = {
       wrapper: null,
       button: null,
-      title: null
+      title: null,
     };
 
     this._data = {
       file: {},
-      title: ''
+      title: '',
     };
 
     this.config = {
@@ -88,11 +91,10 @@ export default class AttachesTool {
       buttonText: config.buttonText || 'Select file to upload',
       errorMessage: config.errorMessage || 'File upload failed',
       uploader: config.uploader || undefined,
-      additionalRequestHeaders: config.additionalRequestHeaders || {}
+      additionalRequestHeaders: config.additionalRequestHeaders || {},
     };
 
-
-    if (data !== undefined && !isEmpty(data)){
+    if (data !== undefined && !isEmpty(data)) {
       this.data = data;
     }
 
@@ -102,7 +104,7 @@ export default class AttachesTool {
     this.uploader = new Uploader({
       config: this.config,
       onUpload: (response) => this.onUpload(response),
-      onError: (error) => this.uploadingFailed(error)
+      onError: (error) => this.uploadingFailed(error),
     });
 
     this.enableFileUpload = this.enableFileUpload.bind(this);
@@ -112,27 +114,29 @@ export default class AttachesTool {
    * Get Tool toolbox settings
    * icon - Tool icon's SVG
    * title - title to show in toolbox
+   *
+   * @returns {{icon: string, title: string}}
    */
   static get toolbox() {
     return {
       icon: IconFile,
-      title: 'Attachment'
+      title: 'Attachment',
     };
   }
-
 
   /**
    * Returns true to notify core that read-only is supported
    *
    * @returns {boolean}
    */
-   static get isReadOnlySupported() {
+  static get isReadOnlySupported() {
     return true;
   }
 
-
   /**
    * Tool's CSS classes
+   *
+   * @returns {object}
    */
   get CSS() {
     return {
@@ -152,12 +156,14 @@ export default class AttachesTool {
       fileInfo: 'cdx-attaches__file-info',
       fileIcon: 'cdx-attaches__file-icon',
       fileIconBackground: 'cdx-attaches__file-icon-background',
-      fileIconLabel: 'cdx-attaches__file-icon-label'
+      fileIconLabel: 'cdx-attaches__file-icon-label',
     };
   }
 
   /**
    * Possible files' extension colors
+   *
+   * @returns {object}
    */
   get EXTENSIONS() {
     return {
@@ -189,7 +195,7 @@ export default class AttachesTool {
       psd: '#388ae5',
       dmg: '#e26f6f',
       json: '#2988f0',
-      csv: '#11AE3D'
+      csv: '#11AE3D',
     };
   }
 
@@ -212,7 +218,7 @@ export default class AttachesTool {
   /**
    * Return Block data
    *
-   * @param {HTMLElement} toolsContent
+   * @param {HTMLElement} toolsContent - block main element returned by the render method
    * @returns {AttachesToolData}
    */
   save(toolsContent) {
@@ -222,9 +228,9 @@ export default class AttachesTool {
     if (this.pluginHasData()) {
       const titleElement = toolsContent.querySelector(`.${this.CSS.title}`);
 
-      if (titleElement){
+      if (titleElement) {
         Object.assign(this.data, {
-          title: titleElement.innerHTML
+          title: titleElement.innerHTML,
         });
       }
     }
@@ -260,7 +266,7 @@ export default class AttachesTool {
     this.nodes.button = make('div', [this.CSS.apiButton, this.CSS.button]);
     this.nodes.button.innerHTML = `${IconFile} ${this.config.buttonText}`;
 
-    if (!this.readOnly){
+    if (!this.readOnly) {
       this.nodes.button.addEventListener('click', this.enableFileUpload);
     }
 
@@ -293,14 +299,14 @@ export default class AttachesTool {
     this.uploader.uploadSelectedFile({
       onPreview: () => {
         this.nodes.wrapper.classList.add(this.CSS.wrapperLoading, this.CSS.loader);
-      }
+      },
     });
   }
 
   /**
    * File uploading callback
    *
-   * @param {UploadResponseFormat} response
+   * @param {UploadResponseFormat} response - server returned data
    */
   onUpload(response) {
     const body = response;
@@ -321,7 +327,6 @@ export default class AttachesTool {
       } else {
         this.uploadingFailed(this.config.errorMessage);
       }
-
     } catch (error) {
       console.error('Attaches tool error:', error);
       this.uploadingFailed(this.config.errorMessage);
@@ -331,7 +336,7 @@ export default class AttachesTool {
   /**
    * Handles uploaded file's extension and appends corresponding icon
    *
-   * @param {Record<string, string | number | boolean>} file - uploaded file data got from the backend. Could contain any fields.
+   * @param {object<string, string | number | boolean>} file - uploaded file data got from the backend. Could contain any fields.
    */
   appendFileIcon(file) {
     const extensionProvided = file.extension;
@@ -352,15 +357,15 @@ export default class AttachesTool {
      * If extension exists, add it via a separate element
      * Otherwise, append file icon
      */
-    if (extension){
+    if (extension) {
       /**
        * Trim long extensions
        *  'sketch' -> 'sket…'
        */
       let extensionVisible = extension;
 
-      if (extension.length > extensionMaxLen){
-        extensionVisible = extension.substring(0, extensionMaxLen) + '…'
+      if (extension.length > extensionMaxLen) {
+        extensionVisible = extension.substring(0, extensionMaxLen) + '…';
       }
 
       const extensionLabel = make('div', this.CSS.fileIconLabel, {
@@ -407,7 +412,6 @@ export default class AttachesTool {
     this.nodes.title.textContent = title || '';
     fileInfo.appendChild(this.nodes.title);
 
-
     if (file.size) {
       let sizePrefix;
       let formattedSize;
@@ -433,7 +437,7 @@ export default class AttachesTool {
         innerHTML: DownloadIcon,
         href: file.url,
         target: '_blank',
-        rel: 'nofollow noindex noreferrer'
+        rel: 'nofollow noindex noreferrer',
       });
 
       this.nodes.wrapper.appendChild(downloadIcon);
@@ -448,7 +452,7 @@ export default class AttachesTool {
   uploadingFailed(errorMessage) {
     this.api.notifier.show({
       message: errorMessage,
-      style: 'error'
+      style: 'error',
     });
 
     this.removeLoader();
@@ -466,12 +470,12 @@ export default class AttachesTool {
   /**
    * Stores all Tool's data
    *
-   * @param {AttachesToolData} data
+   * @param {AttachesToolData} data - data to set
    */
   set data({ file, title }) {
     this._data = {
       file,
-      title
+      title,
     };
   }
 }
