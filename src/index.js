@@ -1,9 +1,7 @@
 import './index.pcss';
 
 import Uploader from './uploader';
-import Icon from './svg/toolbox.svg';
-import FileIcon from './svg/standard.svg';
-import CustomFileIcon from './svg/custom.svg';
+import IconFile from './svg/file.svg';
 import DownloadIcon from './svg/arrow-download.svg';
 import { make, moveCaretToTheEnd, isEmpty } from './utils/dom';
 import { getExtensionFromFileName } from './utils/file';
@@ -115,7 +113,7 @@ export default class AttachesTool {
    */
   static get toolbox() {
     return {
-      icon: Icon,
+      icon: IconFile,
       title: 'Attachment'
     };
   }
@@ -139,7 +137,9 @@ export default class AttachesTool {
       size: 'cdx-attaches__size',
       downloadButton: 'cdx-attaches__download-button',
       fileInfo: 'cdx-attaches__file-info',
-      fileIcon: 'cdx-attaches__file-icon'
+      fileIcon: 'cdx-attaches__file-icon',
+      fileIconBackground: 'cdx-attaches__file-icon-background',
+      fileIconLabel: 'cdx-attaches__file-icon-label'
     };
   }
 
@@ -148,35 +148,35 @@ export default class AttachesTool {
    */
   get EXTENSIONS() {
     return {
-      doc: '#3e74da',
-      docx: '#3e74da',
-      odt: '#3e74da',
-      pdf: '#d47373',
-      rtf: '#656ecd',
+      doc: '#1483E9',
+      docx: '#1483E9',
+      odt: '#1483E9',
+      pdf: '#DB2F2F',
+      rtf: '#744FDC',
       tex: '#5a5a5b',
       txt: '#5a5a5b',
-      pptx: '#e07066',
-      ppt: '#e07066',
+      pptx: '#E35200',
+      ppt: '#E35200',
       mp3: '#eab456',
       mp4: '#f676a6',
-      xls: '#3f9e64',
+      xls: '#11AE3D',
       html: '#2988f0',
       htm: '#2988f0',
-      png: '#f676a6',
-      jpg: '#f67676',
-      jpeg: '#f67676',
+      png: '#AA2284',
+      jpg: '#D13359',
+      jpeg: '#D13359',
       gif: '#f6af76',
       zip: '#4f566f',
       rar: '#4f566f',
       exe: '#e26f6f',
       svg: '#bf5252',
-      key: '#e07066',
-      sketch: '#df821c',
-      ai: '#df821c',
+      key: '#00B2FF',
+      sketch: '#FFC700',
+      ai: '#FB601D',
       psd: '#388ae5',
       dmg: '#e26f6f',
       json: '#2988f0',
-      csv: '#3f9e64'
+      csv: '#11AE3D'
     };
   }
 
@@ -189,7 +189,7 @@ export default class AttachesTool {
    * @public
    */
   validate(savedData) {
-    if (!savedData.file.url) {
+    if (isEmpty(savedData.file)) {
       return false;
     }
 
@@ -245,7 +245,7 @@ export default class AttachesTool {
    */
   prepareUploadButton() {
     this.nodes.button = make('div', [this.CSS.apiButton, this.CSS.button]);
-    this.nodes.button.innerHTML = `${Icon} ${this.config.buttonText}`;
+    this.nodes.button.innerHTML = `${IconFile} ${this.config.buttonText}`;
     this.nodes.button.addEventListener('click', this.enableFileUpload);
     this.nodes.wrapper.appendChild(this.nodes.button);
   }
@@ -320,17 +320,47 @@ export default class AttachesTool {
     const extensionProvided = file.extension;
     const extension = extensionProvided || getExtensionFromFileName(file.name);
     const extensionColor = this.EXTENSIONS[extension];
+    const extensionMaxLen = 4;
 
-    const fileIcon = make('div', this.CSS.fileIcon, {
-      innerHTML: extensionColor ? CustomFileIcon : FileIcon
-    });
+    const wrapper = make('div', this.CSS.fileIcon);
+    const background = make('div', this.CSS.fileIconBackground);
 
     if (extensionColor) {
-      fileIcon.style.color = extensionColor;
-      fileIcon.setAttribute('data-extension', extension);
+      background.style.backgroundColor = extensionColor;
     }
 
-    this.nodes.wrapper.appendChild(fileIcon);
+    wrapper.appendChild(background);
+
+    /**
+     * If extension exists, add it via a separate element
+     * Otherwise, append file icon
+     */
+    if (extension){
+      /**
+       * Trim long extensions
+       *  'sketch' -> 'sket…'
+       */
+      let extensionVisible = extension;
+
+      if (extension.length > extensionMaxLen){
+        extensionVisible = extension.substring(0, extensionMaxLen) + '…'
+      }
+
+      const extensionLabel = make('div', this.CSS.fileIconLabel, {
+        textContent: extensionVisible, // trimmed
+        title: extension, // full text for hover
+      });
+
+      if (extensionColor) {
+        extensionLabel.style.backgroundColor = extensionColor;
+      }
+
+      wrapper.appendChild(extensionLabel);
+    } else {
+      background.innerHTML = IconFile;
+    }
+
+    this.nodes.wrapper.appendChild(wrapper);
   }
 
   /**
