@@ -26,10 +26,10 @@ const LOADER_TIMEOUT = 500;
 
 /**
  * @typedef {object} FileData
- * @description Attaches Tool's response from backend
- * @property {string} url - file's url
- * @property {string} name - file's name with extension
- * @property {string} extension - file's extension
+ * @description Attaches Tool's response from backend. Could contain any data.
+ * @property {string} [url] - file's url
+ * @property {string} [name] - file's name with extension
+ * @property {string} [extension] - file's extension
  */
 
 /**
@@ -64,9 +64,11 @@ export default class AttachesTool {
    * @param {AttachesToolData} data
    * @param {object} config
    * @param {API} api
+   * @param {boolean} readOnly - flag indicates whether the Read-Only mode enabled or not
    */
-  constructor({ data, config, api }) {
+  constructor({ data, config, api, readOnly }) {
     this.api = api;
+    this.readOnly = readOnly;
 
     this.nodes = {
       wrapper: null,
@@ -117,6 +119,17 @@ export default class AttachesTool {
       title: 'Attachment'
     };
   }
+
+
+  /**
+   * Returns true to notify core that read-only is supported
+   *
+   * @returns {boolean}
+   */
+   static get isReadOnlySupported() {
+    return true;
+  }
+
 
   /**
    * Tool's CSS classes
@@ -246,7 +259,11 @@ export default class AttachesTool {
   prepareUploadButton() {
     this.nodes.button = make('div', [this.CSS.apiButton, this.CSS.button]);
     this.nodes.button.innerHTML = `${IconFile} ${this.config.buttonText}`;
-    this.nodes.button.addEventListener('click', this.enableFileUpload);
+
+    if (!this.readOnly){
+      this.nodes.button.addEventListener('click', this.enableFileUpload);
+    }
+
     this.nodes.wrapper.appendChild(this.nodes.button);
   }
 
@@ -383,7 +400,7 @@ export default class AttachesTool {
     const fileInfo = make('div', this.CSS.fileInfo);
 
     this.nodes.title = make('div', this.CSS.title, {
-      contentEditable: true,
+      contentEditable: this.readOnly === false,
     });
 
     this.nodes.title.dataset.placeholder = this.api.i18n.t('File title');

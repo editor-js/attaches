@@ -5,8 +5,6 @@
  * @returns {string}
  */
 export function getExtensionFromFileName(name){
-  console.log('name', name);
-
   if (name === undefined) {
     return '';
   }
