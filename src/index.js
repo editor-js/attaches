@@ -73,12 +73,12 @@ export default class AttachesTool {
     this.nodes = {
       wrapper: null,
       button: null,
-      title: null
+      title: null,
     };
 
     this._data = {
       file: {},
-      title: ''
+      title: '',
     };
 
     this.config = {
@@ -88,11 +88,10 @@ export default class AttachesTool {
       buttonText: config.buttonText || 'Select file to upload',
       errorMessage: config.errorMessage || 'File upload failed',
       uploader: config.uploader || undefined,
-      additionalRequestHeaders: config.additionalRequestHeaders || {}
+      additionalRequestHeaders: config.additionalRequestHeaders || {},
     };
 
-
-    if (data !== undefined && !isEmpty(data)){
+    if (data !== undefined && !isEmpty(data)) {
       this.data = data;
     }
 
@@ -102,7 +101,7 @@ export default class AttachesTool {
     this.uploader = new Uploader({
       config: this.config,
       onUpload: (response) => this.onUpload(response),
-      onError: (error) => this.uploadingFailed(error)
+      onError: (error) => this.uploadingFailed(error),
     });
 
     this.enableFileUpload = this.enableFileUpload.bind(this);
@@ -116,20 +115,18 @@ export default class AttachesTool {
   static get toolbox() {
     return {
       icon: IconFile,
-      title: 'Attachment'
+      title: 'Attachment',
     };
   }
-
 
   /**
    * Returns true to notify core that read-only is supported
    *
    * @returns {boolean}
    */
-   static get isReadOnlySupported() {
+  static get isReadOnlySupported() {
     return true;
   }
-
 
   /**
    * Tool's CSS classes
@@ -152,7 +149,7 @@ export default class AttachesTool {
       fileInfo: 'cdx-attaches__file-info',
       fileIcon: 'cdx-attaches__file-icon',
       fileIconBackground: 'cdx-attaches__file-icon-background',
-      fileIconLabel: 'cdx-attaches__file-icon-label'
+      fileIconLabel: 'cdx-attaches__file-icon-label',
     };
   }
 
@@ -189,7 +186,7 @@ export default class AttachesTool {
       psd: '#388ae5',
       dmg: '#e26f6f',
       json: '#2988f0',
-      csv: '#11AE3D'
+      csv: '#11AE3D',
     };
   }
 
@@ -222,9 +219,9 @@ export default class AttachesTool {
     if (this.pluginHasData()) {
       const titleElement = toolsContent.querySelector(`.${this.CSS.title}`);
 
-      if (titleElement){
+      if (titleElement) {
         Object.assign(this.data, {
-          title: titleElement.innerHTML
+          title: titleElement.innerHTML,
         });
       }
     }
@@ -260,7 +257,7 @@ export default class AttachesTool {
     this.nodes.button = make('div', [this.CSS.apiButton, this.CSS.button]);
     this.nodes.button.innerHTML = `${IconFile} ${this.config.buttonText}`;
 
-    if (!this.readOnly){
+    if (!this.readOnly) {
       this.nodes.button.addEventListener('click', this.enableFileUpload);
     }
 
@@ -293,7 +290,7 @@ export default class AttachesTool {
     this.uploader.uploadSelectedFile({
       onPreview: () => {
         this.nodes.wrapper.classList.add(this.CSS.wrapperLoading, this.CSS.loader);
-      }
+      },
     });
   }
 
@@ -321,7 +318,6 @@ export default class AttachesTool {
       } else {
         this.uploadingFailed(this.config.errorMessage);
       }
-
     } catch (error) {
       console.error('Attaches tool error:', error);
       this.uploadingFailed(this.config.errorMessage);
@@ -352,15 +348,15 @@ export default class AttachesTool {
      * If extension exists, add it via a separate element
      * Otherwise, append file icon
      */
-    if (extension){
+    if (extension) {
       /**
        * Trim long extensions
        *  'sketch' -> 'sket…'
        */
       let extensionVisible = extension;
 
-      if (extension.length > extensionMaxLen){
-        extensionVisible = extension.substring(0, extensionMaxLen) + '…'
+      if (extension.length > extensionMaxLen) {
+        extensionVisible = extension.substring(0, extensionMaxLen) + '…';
       }
 
       const extensionLabel = make('div', this.CSS.fileIconLabel, {
@@ -407,7 +403,6 @@ export default class AttachesTool {
     this.nodes.title.textContent = title || '';
     fileInfo.appendChild(this.nodes.title);
 
-
     if (file.size) {
       let sizePrefix;
       let formattedSize;
@@ -433,7 +428,7 @@ export default class AttachesTool {
         innerHTML: DownloadIcon,
         href: file.url,
         target: '_blank',
-        rel: 'nofollow noindex noreferrer'
+        rel: 'nofollow noindex noreferrer',
       });
 
       this.nodes.wrapper.appendChild(downloadIcon);
@@ -448,7 +443,7 @@ export default class AttachesTool {
   uploadingFailed(errorMessage) {
     this.api.notifier.show({
       message: errorMessage,
-      style: 'error'
+      style: 'error',
     });
 
     this.removeLoader();
@@ -471,7 +466,7 @@ export default class AttachesTool {
   set data({ file, title }) {
     this._data = {
       file,
-      title
+      title,
     };
   }
 }
