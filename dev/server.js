@@ -86,7 +86,7 @@ class ServerExample {
         responseJson.file = {
           url: file.path,
           name: file.name,
-          size: file.size
+          size: file.size,
         };
       })
       .catch((error) => {

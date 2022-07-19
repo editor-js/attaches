@@ -114,7 +114,7 @@ Response of your uploader **should** cover following format:
 {
     "success" : 1,
     "file": {
-        // any data you want 
+        // any data you want
         // for example: url, name, size, title
     }
 }
@@ -122,8 +122,14 @@ Response of your uploader **should** cover following format:
 
 **success** - uploading status. 1 for successful, 0 for failed
 
-**file** - uploaded file data.
-Can contain data you want to store. Fields `url`, `name`, `size`, and `extension` if present will be written to [file object](#file-object). Fields size and extension are supported by design.
+**file** - uploaded file data. Can contain any data you want to store. All fields will be stored as [file object](#file-object) in output data.
+
+Fields supported by the UI of block:
+
+ - `title`
+ - `size`
+ - `extension` (if not present, will be extracted from the `name`)
+ - `url`
 
 ## Providing custom uploading methods
 
@@ -165,7 +171,7 @@ var editor = EditorJS({
                 success: 1,
                 file: {
                   url: response.fileurl,
-                  // any data you want 
+                  // any data you want
                   // for example: name, size, title
                 }
               };

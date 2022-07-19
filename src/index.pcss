@@ -1,9 +1,9 @@
 .cdx-attaches {
   &--with-file {
     display: flex;
-    padding: 13px 20px;
+    padding: 13px 16px;
     border: 1px solid #e6e9eb;
-    border-radius: 3px;
+    border-radius: 6px;
     background: #fff;
 
     ^&__file-info {
@@ -33,6 +33,9 @@
         text-transform: uppercase;
         background: #fff;
         line-height: 150%;
+        padding: 2px 1px;
+        line-height: 1em;
+        border-radius: 3px;
         content: attr(data-extension);
       }
 
@@ -43,6 +46,7 @@
 
     ^&__size {
       color: #7b7e89;
+      font-size: 0.8em;
 
       &::after {
         content: attr(data-size);
@@ -56,6 +60,11 @@
       overflow: hidden;
       outline: none;
       max-width: 90%;
+    }
+
+    ^&__title:empty::before {
+      content: attr(data-placeholder);
+      color: #7b7e89;
     }
   }
 
