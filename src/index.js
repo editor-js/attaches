@@ -1,10 +1,10 @@
 import './index.pcss';
 
 import Uploader from './uploader';
-import Icon from './svg/toolbox.svg';
-import FileIcon from './svg/standard.svg';
-import CustomFileIcon from './svg/custom.svg';
+import IconFile from './svg/file.svg';
 import DownloadIcon from './svg/arrow-download.svg';
+import { make, moveCaretToTheEnd, isEmpty } from './utils/dom';
+import { getExtensionFromFileName } from './utils/file';
 
 const LOADER_TIMEOUT = 500;
 
@@ -26,10 +26,10 @@ const LOADER_TIMEOUT = 500;
 
 /**
  * @typedef {object} FileData
- * @description Attaches Tool's response from backend
- * @property {string} url - file's url
- * @property {string} name - file's name with extension
- * @property {string} extension - file's extension
+ * @description Attaches Tool's response from backend. Could contain any data.
+ * @property {string} [url] - file's url
+ * @property {string} [name] - file's name with extension
+ * @property {string} [extension] - file's extension
  */
 
 /**
@@ -64,9 +64,11 @@ export default class AttachesTool {
    * @param {AttachesToolData} data
    * @param {object} config
    * @param {API} api
+   * @param {boolean} readOnly - flag indicates whether the Read-Only mode enabled or not
    */
-  constructor({ data, config, api }) {
+  constructor({ data, config, api, readOnly }) {
     this.api = api;
+    this.readOnly = readOnly;
 
     this.nodes = {
       wrapper: null,
@@ -89,7 +91,10 @@ export default class AttachesTool {
       additionalRequestHeaders: config.additionalRequestHeaders || {}
     };
 
-    this.data = data;
+
+    if (data !== undefined && !isEmpty(data)){
+      this.data = data;
+    }
 
     /**
      * Module for files uploading
@@ -110,10 +115,21 @@ export default class AttachesTool {
    */
   static get toolbox() {
     return {
-      icon: Icon,
-      title: 'Attaches'
+      icon: IconFile,
+      title: 'Attachment'
     };
   }
+
+
+  /**
+   * Returns true to notify core that read-only is supported
+   *
+   * @returns {boolean}
+   */
+   static get isReadOnlySupported() {
+    return true;
+  }
+
 
   /**
    * Tool's CSS classes
@@ -134,7 +150,9 @@ export default class AttachesTool {
       size: 'cdx-attaches__size',
       downloadButton: 'cdx-attaches__download-button',
       fileInfo: 'cdx-attaches__file-info',
-      fileIcon: 'cdx-attaches__file-icon'
+      fileIcon: 'cdx-attaches__file-icon',
+      fileIconBackground: 'cdx-attaches__file-icon-background',
+      fileIconLabel: 'cdx-attaches__file-icon-label'
     };
   }
 
@@ -143,35 +161,35 @@ export default class AttachesTool {
    */
   get EXTENSIONS() {
     return {
-      doc: '#3e74da',
-      docx: '#3e74da',
-      odt: '#3e74da',
-      pdf: '#d47373',
-      rtf: '#656ecd',
+      doc: '#1483E9',
+      docx: '#1483E9',
+      odt: '#1483E9',
+      pdf: '#DB2F2F',
+      rtf: '#744FDC',
       tex: '#5a5a5b',
       txt: '#5a5a5b',
-      pptx: '#e07066',
-      ppt: '#e07066',
+      pptx: '#E35200',
+      ppt: '#E35200',
       mp3: '#eab456',
       mp4: '#f676a6',
-      xls: '#3f9e64',
+      xls: '#11AE3D',
       html: '#2988f0',
       htm: '#2988f0',
-      png: '#f676a6',
-      jpg: '#f67676',
-      jpeg: '#f67676',
+      png: '#AA2284',
+      jpg: '#D13359',
+      jpeg: '#D13359',
       gif: '#f6af76',
       zip: '#4f566f',
       rar: '#4f566f',
       exe: '#e26f6f',
       svg: '#bf5252',
-      key: '#e07066',
-      sketch: '#df821c',
-      ai: '#df821c',
+      key: '#00B2FF',
+      sketch: '#FFC700',
+      ai: '#FB601D',
       psd: '#388ae5',
       dmg: '#e26f6f',
       json: '#2988f0',
-      csv: '#3f9e64'
+      csv: '#11AE3D'
     };
   }
 
@@ -184,7 +202,7 @@ export default class AttachesTool {
    * @public
    */
   validate(savedData) {
-    if (!savedData.file.url) {
+    if (isEmpty(savedData.file)) {
       return false;
     }
 
@@ -202,9 +220,13 @@ export default class AttachesTool {
      * If file was uploaded
      */
     if (this.pluginHasData()) {
-      const title = toolsContent.querySelector(`.${this.CSS.title}`).innerHTML;
+      const titleElement = toolsContent.querySelector(`.${this.CSS.title}`);
 
-      Object.assign(this.data, { title });
+      if (titleElement){
+        Object.assign(this.data, {
+          title: titleElement.innerHTML
+        });
+      }
     }
 
     return this.data;
@@ -216,9 +238,9 @@ export default class AttachesTool {
    * @returns {HTMLDivElement}
    */
   render() {
-    const holder = this.make('div', this.CSS.baseClass);
+    const holder = make('div', this.CSS.baseClass);
 
-    this.nodes.wrapper = this.make('div', this.CSS.wrapper);
+    this.nodes.wrapper = make('div', this.CSS.wrapper);
 
     if (this.pluginHasData()) {
       this.showFileData();
@@ -235,9 +257,13 @@ export default class AttachesTool {
    * Prepares button for file uploading
    */
   prepareUploadButton() {
-    this.nodes.button = this.make('div', [this.CSS.apiButton, this.CSS.button]);
-    this.nodes.button.innerHTML = `${Icon} ${this.config.buttonText}`;
-    this.nodes.button.addEventListener('click', this.enableFileUpload);
+    this.nodes.button = make('div', [this.CSS.apiButton, this.CSS.button]);
+    this.nodes.button.innerHTML = `${IconFile} ${this.config.buttonText}`;
+
+    if (!this.readOnly){
+      this.nodes.button.addEventListener('click', this.enableFileUpload);
+    }
+
     this.nodes.wrapper.appendChild(this.nodes.button);
   }
 
@@ -279,46 +305,79 @@ export default class AttachesTool {
   onUpload(response) {
     const body = response;
 
-    if (body.success && body.file) {
-      const { url, name, size, title } = body.file;
+    try {
+      if (body.success && body.file !== undefined && !isEmpty(body.file)) {
+        this.data = {
+          file: body.file,
+          title: body.file.title || '',
+        };
 
-      this.data = {
-        file: {
-          url,
-          extension: name ? name.split('.').pop() : '',
-          name,
-          size,
-        },
-        title,
-      };
+        this.nodes.button.remove();
+        this.showFileData();
 
-      this.nodes.button.remove();
-      this.showFileData();
-      this.moveCaretToEnd(this.nodes.title);
-      this.nodes.title.focus();
-      this.removeLoader();
-    } else {
+        moveCaretToTheEnd(this.nodes.title);
+
+        this.removeLoader();
+      } else {
+        this.uploadingFailed(this.config.errorMessage);
+      }
+
+    } catch (error) {
+      console.error('Attaches tool error:', error);
       this.uploadingFailed(this.config.errorMessage);
     }
   }
 
   /**
    * Handles uploaded file's extension and appends corresponding icon
+   *
+   * @param {Record<string, string | number | boolean>} file - uploaded file data got from the backend. Could contain any fields.
    */
-  appendFileIcon() {
-    const extension = this.data.file.extension || '';
+  appendFileIcon(file) {
+    const extensionProvided = file.extension;
+    const extension = extensionProvided || getExtensionFromFileName(file.name);
     const extensionColor = this.EXTENSIONS[extension];
+    const extensionMaxLen = 4;
 
-    const fileIcon = this.make('div', this.CSS.fileIcon, {
-      innerHTML: extensionColor ? CustomFileIcon : FileIcon
-    });
+    const wrapper = make('div', this.CSS.fileIcon);
+    const background = make('div', this.CSS.fileIconBackground);
 
     if (extensionColor) {
-      fileIcon.style.color = extensionColor;
-      fileIcon.setAttribute('data-extension', extension);
+      background.style.backgroundColor = extensionColor;
     }
 
-    this.nodes.wrapper.appendChild(fileIcon);
+    wrapper.appendChild(background);
+
+    /**
+     * If extension exists, add it via a separate element
+     * Otherwise, append file icon
+     */
+    if (extension){
+      /**
+       * Trim long extensions
+       *  'sketch' -> 'sket…'
+       */
+      let extensionVisible = extension;
+
+      if (extension.length > extensionMaxLen){
+        extensionVisible = extension.substring(0, extensionMaxLen) + '…'
+      }
+
+      const extensionLabel = make('div', this.CSS.fileIconLabel, {
+        textContent: extensionVisible, // trimmed
+        title: extension, // full text for hover
+      });
+
+      if (extensionColor) {
+        extensionLabel.style.backgroundColor = extensionColor;
+      }
+
+      wrapper.appendChild(extensionLabel);
+    } else {
+      background.innerHTML = IconFile;
+    }
+
+    this.nodes.wrapper.appendChild(wrapper);
   }
 
   /**
@@ -334,32 +393,32 @@ export default class AttachesTool {
   showFileData() {
     this.nodes.wrapper.classList.add(this.CSS.wrapperWithFile);
 
-    const { file: { size, url }, title } = this.data;
+    const { file, title } = this.data;
 
-    this.appendFileIcon();
+    this.appendFileIcon(file);
 
-    const fileInfo = this.make('div', this.CSS.fileInfo);
+    const fileInfo = make('div', this.CSS.fileInfo);
 
-    if (title) {
-      this.nodes.title = this.make('div', this.CSS.title, {
-        contentEditable: true
-      });
+    this.nodes.title = make('div', this.CSS.title, {
+      contentEditable: this.readOnly === false,
+    });
 
-      this.nodes.title.textContent = title;
-      fileInfo.appendChild(this.nodes.title);
-    }
+    this.nodes.title.dataset.placeholder = this.api.i18n.t('File title');
+    this.nodes.title.textContent = title || '';
+    fileInfo.appendChild(this.nodes.title);
 
-    if (size) {
+
+    if (file.size) {
       let sizePrefix;
       let formattedSize;
-      const fileSize = this.make('div', this.CSS.size);
+      const fileSize = make('div', this.CSS.size);
 
-      if (Math.log10(+size) >= 6) {
+      if (Math.log10(+file.size) >= 6) {
         sizePrefix = 'MiB';
-        formattedSize = size / Math.pow(2, 20);
+        formattedSize = file.size / Math.pow(2, 20);
       } else {
         sizePrefix = 'KiB';
-        formattedSize = size / Math.pow(2, 10);
+        formattedSize = file.size / Math.pow(2, 10);
       }
 
       fileSize.textContent = formattedSize.toFixed(1);
@@ -369,14 +428,16 @@ export default class AttachesTool {
 
     this.nodes.wrapper.appendChild(fileInfo);
 
-    const downloadIcon = this.make('a', this.CSS.downloadButton, {
-      innerHTML: DownloadIcon,
-      href: url,
-      target: '_blank',
-      rel: 'nofollow noindex noreferrer'
-    });
+    if (file.url !== undefined) {
+      const downloadIcon = make('a', this.CSS.downloadButton, {
+        innerHTML: DownloadIcon,
+        href: file.url,
+        target: '_blank',
+        rel: 'nofollow noindex noreferrer'
+      });
 
-    this.nodes.wrapper.appendChild(downloadIcon);
+      this.nodes.wrapper.appendChild(downloadIcon);
+    }
   }
 
   /**
@@ -408,53 +469,9 @@ export default class AttachesTool {
    * @param {AttachesToolData} data
    */
   set data({ file, title }) {
-    this._data = Object.assign({}, {
-      file: {
-        url: (file && file.url) || this._data.file.url,
-        name: (file && file.name) || this._data.file.name,
-        extension: (file && file.extension) || this._data.file.extension,
-        size: (file && file.size) || this._data.file.size
-      },
-      title: title || this._data.title
-    });
-  }
-
-  /**
-   * Moves caret to the end of contentEditable element
-   *
-   * @param {HTMLElement} element - contentEditable element
-   */
-  moveCaretToEnd(element) {
-    const range = document.createRange();
-    const selection = window.getSelection();
-
-    range.selectNodeContents(element);
-    range.collapse(false);
-    selection.removeAllRanges();
-    selection.addRange(range);
-  }
-
-  /**
-   * Helper method for elements creation
-   *
-   * @param tagName
-   * @param classNames
-   * @param attributes
-   * @returns {HTMLElement}
-   */
-  make(tagName, classNames = null, attributes = {}) {
-    const el = document.createElement(tagName);
-
-    if (Array.isArray(classNames)) {
-      el.classList.add(...classNames);
-    } else if (classNames) {
-      el.classList.add(classNames);
-    }
-
-    for (const attrName in attributes) {
-      el[attrName] = attributes[attrName];
-    }
-
-    return el;
+    this._data = {
+      file,
+      title
+    };
   }
 }

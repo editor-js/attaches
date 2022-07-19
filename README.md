@@ -1,31 +1,20 @@
-![](https://badgen.net/badge/Editor.js/v2.0/blue)
 # Attaches Tool
-Attaches Tool for the [Editor.js](https://codex.so/editor).
+
+Tool for the [Editor.js](https://editorjs.io).
 
 This tool allows you to attach files to your articles.
 
-![Example](https://capella.pics/7b63cffe-9214-40f4-9009-0637970a4630.jpg)
+![Example of the Attach tool look](https://user-images.githubusercontent.com/3684889/179849070-1af9678b-34fb-4485-860e-39f3b0d26c3e.png)
 
-## Get the package
+## Installation
+
 You can get the package using any of these ways.
 
-### Install via npm
+### Via NPM / Yarn
 
 ```shell
-npm i --save-dev @editorjs/attaches
+npm install @editorjs/attaches
 ```
-
-Include module at your application
-
-```javascript
-const AttachesTool = require('@editorjs/attaches');
-```
-
-
-### Download to your project's source dir
-
-1. Upload folder `dist` from repository
-2. Add `dist/bundle.js` file to your page.
 
 ### Load from CDN
 
@@ -40,13 +29,15 @@ Then require this script on page with Editor.js through the `<script src=""></sc
 Add a new Tool to the `tools` property of the Editor.js initial config.
 
 ```javascript
+import AttachmentTool from '@editorjs/attaches';
+
 var editor = EditorJS({
   ...
 
   tools: {
     ...
     attaches: {
-      class: AttachesTool,
+      class: AttachmentTool,
       config: {
         endpoint: 'http://localhost:8008/uploadFile'
       }
@@ -82,6 +73,7 @@ This Tool returns `data` with following format
 | title | `string` | File's title. Initially set as uploaded file name. Can be modified by user.          |
 
 ### file object <a name="file-object"></a>
+
 Object `file` consists of the following fields. All of them are optional, `size` and `extension` are supported by design.
 
 | Field          | Type      | Description                       |
@@ -114,7 +106,7 @@ Response of your uploader **should** cover following format:
 {
     "success" : 1,
     "file": {
-        // any data you want 
+        // any data you want
         // for example: url, name, size, title
     }
 }
@@ -122,8 +114,14 @@ Response of your uploader **should** cover following format:
 
 **success** - uploading status. 1 for successful, 0 for failed
 
-**file** - uploaded file data.
-Can contain data you want to store. Fields `url`, `name`, `size`, and `extension` if present will be written to [file object](#file-object). Fields size and extension are supported by design.
+**file** - uploaded file data. Can contain any data you want to store. All fields will be stored as [file object](#file-object) in output data.
+
+Fields supported by the UI of block:
+
+ - `title`
+ - `size`
+ - `extension` (if not present, will be extracted from the `name`)
+ - `url`
 
 ## Providing custom uploading methods
 
@@ -165,7 +163,7 @@ var editor = EditorJS({
                 success: 1,
                 file: {
                   url: response.fileurl,
-                  // any data you want 
+                  // any data you want
                   // for example: name, size, title
                 }
               };
