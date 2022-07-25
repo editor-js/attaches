@@ -29,7 +29,7 @@ Then require this script on page with Editor.js through the `<script src=""></sc
 Add a new Tool to the `tools` property of the Editor.js initial config.
 
 ```javascript
-import AttachmentTool from '@editorjs/attaches';
+import AttachesTool from '@editorjs/attaches';
 
 var editor = EditorJS({
   ...
@@ -37,7 +37,7 @@ var editor = EditorJS({
   tools: {
     ...
     attaches: {
-      class: AttachmentTool,
+      class: AttachesTool,
       config: {
         endpoint: 'http://localhost:8008/uploadFile'
       }
