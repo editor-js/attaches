@@ -331,6 +331,11 @@ export default class AttachesTool {
       console.error('Attaches tool error:', error);
       this.uploadingFailed(this.config.errorMessage);
     }
+    
+    /**
+     * Trigger onChange function when upload finished
+     */
+    this.api.blocks.getBlockByIndex(this.api.blocks.getCurrentBlockIndex()).dispatchChange();
   }
 
   /**
