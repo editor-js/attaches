@@ -314,7 +314,12 @@ export default class AttachesTool {
     try {
       if (body.success && body.file !== undefined && !isEmpty(body.file)) {
         this.data = {
-          file: body.file,
+          file: {
+            url: body.file.url || '',
+            name: body.file.name || '',
+            extension: body.file.extension || '',
+            size: body.file.size || '',
+          },
           title: body.file.title || '',
         };
 
