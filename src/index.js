@@ -1,10 +1,9 @@
 import './index.pcss';
 
 import Uploader from './uploader';
-import IconFile from './svg/file.svg';
-import DownloadIcon from './svg/arrow-download.svg';
 import { make, moveCaretToTheEnd, isEmpty } from './utils/dom';
 import { getExtensionFromFileName } from './utils/file';
+import { IconChevronDown, IconFile } from '@codexteam/icons'
 
 const LOADER_TIMEOUT = 500;
 
@@ -439,7 +438,7 @@ export default class AttachesTool {
 
     if (file.url !== undefined) {
       const downloadIcon = make('a', this.CSS.downloadButton, {
-        innerHTML: DownloadIcon,
+        innerHTML: IconChevronDown,
         href: file.url,
         target: '_blank',
         rel: 'nofollow noindex noreferrer',
