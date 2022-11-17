@@ -3,7 +3,7 @@ import './index.pcss';
 import Uploader from './uploader';
 import { make, moveCaretToTheEnd, isEmpty } from './utils/dom';
 import { getExtensionFromFileName } from './utils/file';
-import { IconChevronDown, IconFile } from '@codexteam/icons'
+import { IconChevronDown, IconFile } from '@codexteam/icons';
 
 const LOADER_TIMEOUT = 500;
 
@@ -330,7 +330,7 @@ export default class AttachesTool {
       console.error('Attaches tool error:', error);
       this.uploadingFailed(this.config.errorMessage);
     }
-    
+
     /**
      * Trigger onChange function when upload finished
      */
