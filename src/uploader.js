@@ -66,6 +66,48 @@ export default class Uploader {
       this.onError(message);
     });
   }
+  /**
+   * Handle clicks on the upload file button
+   * Fires ajax.post()
+   *
+   * @param {File} file - file pasted by drag-n-drop
+   * @param {Function} onPreview - file pasted by drag-n-drop
+   */
+  uploadByFile(file, { onPreview }) {
+    /**
+     * Custom uploading
+     * or default uploading
+     */
+    let upload;
+
+    // custom uploading
+    if (this.config.uploader && typeof this.config.uploader.uploadByFile === 'function') {
+      upload = this.config.uploader.uploadByFile(file);
+
+      if (!isPromise(upload)) {
+        console.warn('Custom uploader method uploadByFile should return a Promise');
+      }
+      // default uploading
+    } else {
+      upload = ajax.transport({
+        url: this.config.endpoint,
+        accept: this.config.types,
+        beforeSend: () => onPreview(),
+        fieldName: this.config.field,
+        headers: this.config.additionalRequestHeaders || {},
+      }).then((response) => response.body);
+    }
+
+    upload.then((response) => {
+      this.onUpload(response);
+    }).catch((errorResponse) => {
+      const error = errorResponse.body;
+
+      const message = (error && error.message) ? error.message : this.config.errorMessage;
+
+      this.onError(message);
+    });
+  }
 }
 /**
  * Check if passed object is a Promise
