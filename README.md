@@ -125,8 +125,8 @@ Fields supported by the UI of block:
 
 ## Providing custom uploading methods
 
-As mentioned at the Config Params section, you have an ability to provide own custom uploading method.
-It is a quite simple: implement `uploadByFile` method and pass them via `uploader` config param.
+As mentioned at the Config Params section, you have an ability to provide your own custom uploading method.
+It is quite simple: implement `uploadByFile` method and pass them via `uploader` config param.
 The method return a Promise that resolves with response in a format that described at the [backend response format](#backend-response-format) section.
 
 
