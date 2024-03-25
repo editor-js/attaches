@@ -52,16 +52,16 @@ var editor = EditorJS({
 
 Attaches Tool supports these configuration parameters:
 
-| Field | Type     | Description        |
-| ----- | -------- | ------------------ |
-| endpoint | `string` | Optional endpoint for file uploading or use uploader |
-| uploader | `{uploadByFile: function}` |Optional custom uploading method or use endpoint|
-| field | `string` | (default: `file`) Name of uploaded file field in POST request |
-| types | `string` | (default: `*`) Mime-types of files that can be [accepted with file selection](https://github.com/codex-team/ajax#accept-string).|
-| buttonText | `string` | (default: `Select file`) Placeholder for file upload button |
-| errorMessage | `string` | (default: `File upload failed`) Message to show if file upload failed |
-| additionalRequestHeaders | `object` | (default: `{}`) Object with any custom headers which will be added to request. Example: `{"X-CSRF-TOKEN": "W5fe2...hR8d1"}` |
-
+| Field                    | Type                       | Description        |
+|--------------------------|----------------------------| ------------------ |
+| endpoint                 | `string`                   | Optional endpoint for file uploading or use uploader |
+| uploader                 | `{uploadByFile: function}` |Optional custom uploading method or use endpoint|
+| field                    | `string`                   | (default: `file`) Name of uploaded file field in POST request |
+| types                    | `string`                   | (default: `*`) Mime-types of files that can be [accepted with file selection](https://github.com/codex-team/ajax#accept-string).|
+| buttonText               | `string`                   | (default: `Select file`) Placeholder for file upload button |
+| errorMessage             | `string`                   | (default: `File upload failed`) Message to show if file upload failed |
+| additionalRequestHeaders | `object`                   | (default: `{}`) Object with any custom headers which will be added to request. Example: `{"X-CSRF-TOKEN": "W5fe2...hR8d1"}` |
+| downloader               | `{download: function}`     |Optional custom for downloading image. See details below.|
 
 ## Output data
 
@@ -175,4 +175,55 @@ var editor = EditorJS({
   }
   ...
 });
+```
+
+## Providing custom download method
+
+As mentioned at the Config Params section, you have an ability to provide own custom downloading methods.
+It is a quite simple: implement `download` method and pass them via `downloader` config param.
+
+
+| Method         | Arguments | Return value     | Description |
+| -------------- | --------- |------------------|------------|
+| download   | `url`, `File` | `url` or `blobUrl` | Custom download function to get image data |
+
+Example:
+
+```js
+import ImageTool from '@editorjs/attaches';
+
+
+var editor = EditorJS({
+    ...
+    tools: {
+    ...
+    attaches: {
+        class: AttachesTool,
+            config: {
+            /**
+             * Custom downloader
+             */
+            downloader: {
+                async download(url: string, file: any) {
+                    const data = await getImageData();
+                    const blob = new Blob([data]);
+                    const blobUrl = URL.createObjectURL(blob);
+                    return blobUrl;
+                },
+            },
+        }
+    }
+}
+});
+```
+> It is recommended to add a "name" attribute to the upload parameters to make the downloaded filename more clear and recognizable.
+```js
+return {
+    success: 1,
+    file: {
+        url: response.fileurl,
+        name: file.name
+        // for example: name, size, title
+    }
+};
 ```
