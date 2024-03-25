@@ -90,6 +90,7 @@ export default class AttachesTool {
       buttonText: config.buttonText || 'Select file to upload',
       errorMessage: config.errorMessage || 'File upload failed',
       uploader: config.uploader || undefined,
+      downloader: config.downloader || undefined,
       additionalRequestHeaders: config.additionalRequestHeaders || {},
     };
 
@@ -399,7 +400,7 @@ export default class AttachesTool {
   /**
    * If upload is successful, show info about the file
    */
-  showFileData() {
+  async showFileData() {
     this.nodes.wrapper.classList.add(this.CSS.wrapperWithFile);
 
     const { file, title } = this.data;
@@ -437,11 +438,17 @@ export default class AttachesTool {
     this.nodes.wrapper.appendChild(fileInfo);
 
     if (file.url !== undefined) {
+      let downloadInfo = {href: file.url};
+      const fileName = file.name || file.url.split("/").pop();
+      if (this.config.downloader) {
+        downloadInfo.href = await this.config.downloader.download(file.url, file);
+        downloadInfo.download = fileName;
+      }
       const downloadIcon = make('a', this.CSS.downloadButton, {
         innerHTML: IconChevronDown,
-        href: file.url,
         target: '_blank',
         rel: 'nofollow noindex noreferrer',
+        ...downloadInfo
       });
 
       this.nodes.wrapper.appendChild(downloadIcon);
