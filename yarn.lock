@@ -1551,8 +1551,8 @@ camelcase@^5.0.0:
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-5.3.1.tgz#e3c9b31569e106811df242f715725a1f4c494320"
 
 caniuse-lite@^1.0.30001280:
-  version "1.0.30001282"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001282.tgz#38c781ee0a90ccfe1fe7fefd00e43f5ffdcb96fd"
+  version "1.0.30001650"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001650.tgz"
 
 caseless@~0.12.0:
   version "0.12.0"

@@ -4,6 +4,7 @@ import Uploader from './uploader';
 import { make, moveCaretToTheEnd, isEmpty } from './utils/dom';
 import { getExtensionFromFileName } from './utils/file';
 import { IconChevronDown, IconFile } from '@codexteam/icons';
+import {onClickDownloadButton} from './utils/customEvents';
 
 const LOADER_TIMEOUT = 500;
 
@@ -47,6 +48,8 @@ const LOADER_TIMEOUT = 500;
  * @property {string} errorMessage - message to show if file uploading failed
  * @property {object} [uploader] - optional custom uploader
  * @property {function(File): Promise.<UploadResponseFormat>} [uploader.uploadByFile] - custom method that upload file and returns response
+ * @property {object} [downloadButton] - download button configuration
+ * @property {function(Event, AttachesToolData): void} [downloadButton.onClick] - custom method that handles download button click
  */
 
 /**
@@ -90,6 +93,7 @@ export default class AttachesTool {
       buttonText: config.buttonText || 'Select file to upload',
       errorMessage: config.errorMessage || 'File upload failed',
       uploader: config.uploader || undefined,
+      downloadButton: config.downloadButton || undefined,
       additionalRequestHeaders: config.additionalRequestHeaders || {},
     };
 
@@ -441,6 +445,14 @@ export default class AttachesTool {
         innerHTML: IconChevronDown,
         href: file.url,
         target: '_blank',
+      });
+
+      /**
+       * Registering the config.downloadButton.onClick handler.
+       * The function onClickDownloadButton will invoke the this.config.downloadButton.onClick function if it exists.
+       */
+      downloadIcon.addEventListener('click', (event) =>{
+        onClickDownloadButton(event, this.config, this.data);
       });
 
       this.nodes.wrapper.appendChild(downloadIcon);

@@ -61,6 +61,7 @@ Attaches Tool supports these configuration parameters:
 | buttonText | `string` | (default: `Select file`) Placeholder for file upload button |
 | errorMessage | `string` | (default: `File upload failed`) Message to show if file upload failed |
 | additionalRequestHeaders | `object` | (default: `{}`) Object with any custom headers which will be added to request. Example: `{"X-CSRF-TOKEN": "W5fe2...hR8d1"}` |
+| downloadButton | `{onClick: function}` |Option custom onClick event handler to customize the onclick event of download icon|
 
 
 ## Output data
@@ -169,6 +170,54 @@ var editor = EditorJS({
               };
             });
           },
+        }
+      }
+    }
+  }
+  ...
+});
+```
+
+## Providing custom download button event handlers
+
+As mentioned at the Config Params section, you have an ability to provide own custom onClick event handler for the download button.
+It is a quite simple: implement `onClick` method and pass them via `downloadButton` config param.
+This method will be invoked when the download button is clicked.
+
+
+| Method         | Arguments | Return value | Description |
+| -------------- | --------- | -------------| ------------|
+| onClick   | `MouseEvent`, `Object`    | `void` | Handle the click event for the download button, allowing custom logic |
+
+Example:
+
+```js
+import AttachesTool from '@editorjs/attaches';
+
+var editor = EditorJS({
+  ...
+
+  tools: {
+    ...
+    attaches: {
+      class: AttachesTool,
+      config: {
+        /**
+         * Custom download button handler
+         */
+        downloadButton: {
+          /**
+           * Custom logic to execute when download button is clicked
+           * @param {MouseEvent} event - The click event object
+           * @param {Object} data - The file data object, containing information such as url, name, size, extension
+           */
+          onClick: function(event, data) {
+            // Prevent the default download behavior
+            event.preventDefault();
+
+            // Custom download logic here
+            console.log('File download initiated:', data.file.url);
+          }
         }
       }
     }

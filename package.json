@@ -43,5 +43,9 @@
   },
   "dependencies": {
     "@codexteam/icons": "^0.0.4"
+  },
+  "volta": {
+    "node": "16.20.2",
+    "yarn": "1.22.22"
   }
 }
