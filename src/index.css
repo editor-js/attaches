@@ -1,5 +1,6 @@
 .cdx-attaches {
   --color-line: #EFF0F1;
+  --color-line--hover: #e7e8e9;
   --color-bg: #fff;
   --color-bg-secondary: #F8F8F8;
   --color-bg-secondary--hover: #f2f2f2;
@@ -12,6 +13,11 @@
     border: 1px solid var(--color-line);
     border-radius: 7px;
     background: var(--color-bg);
+    text-decoration: none !important;
+
+    &[href]:hover, &[href]:focus {
+      --color-line: var(--color-line--hover);
+    }
 
     ^&__file-info {
       display: grid;
