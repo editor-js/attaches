@@ -1,11 +1,11 @@
-import './index.css';
+import './index.css'
 
-import Uploader from './uploader';
-import { make, moveCaretToTheEnd, isEmpty } from './utils/dom';
-import { getExtensionFromFileName } from './utils/file';
-import { IconChevronDown, IconFile } from '@codexteam/icons';
+import Uploader from './uploader'
+import { make, moveCaretToTheEnd, isEmpty } from './utils/dom'
+import { getExtensionFromFileName } from './utils/file'
+import { IconChevronDown, IconFile } from '@codexteam/icons'
 
-const LOADER_TIMEOUT = 500;
+const LOADER_TIMEOUT = 500
 
 /**
  * @typedef {object} AttachesToolData
@@ -68,20 +68,20 @@ export default class AttachesTool {
    * @param {EditorAPI} options.api - Editor.js API
    * @param {boolean} options.readOnly - flag indicates whether the Read-Only mode enabled or not
    */
-  constructor({ data, config, api, readOnly }) {
-    this.api = api;
-    this.readOnly = readOnly;
+  constructor ({ data, config, api, readOnly }) {
+    this.api = api
+    this.readOnly = readOnly
 
     this.nodes = {
       wrapper: null,
       button: null,
-      title: null,
-    };
+      title: null
+    }
 
     this._data = {
       file: {},
-      title: '',
-    };
+      title: ''
+    }
 
     this.config = {
       endpoint: config.endpoint || '',
@@ -91,11 +91,11 @@ export default class AttachesTool {
       errorMessage: config.errorMessage || 'File upload failed',
       uploader: config.uploader || undefined,
       openFile: config.openFile || undefined,
-      additionalRequestHeaders: config.additionalRequestHeaders || {},
-    };
+      additionalRequestHeaders: config.additionalRequestHeaders || {}
+    }
 
     if (data !== undefined && !isEmpty(data)) {
-      this.data = data;
+      this.data = data
     }
 
     /**
@@ -103,11 +103,11 @@ export default class AttachesTool {
      */
     this.uploader = new Uploader({
       config: this.config,
-      onUpload: (response) => this.onUpload(response),
-      onError: (error) => this.uploadingFailed(error),
-    });
+      onUpload: response => this.onUpload(response),
+      onError: error => this.uploadingFailed(error)
+    })
 
-    this.enableFileUpload = this.enableFileUpload.bind(this);
+    this.enableFileUpload = this.enableFileUpload.bind(this)
   }
 
   /**
@@ -117,11 +117,11 @@ export default class AttachesTool {
    *
    * @returns {{icon: string, title: string}}
    */
-  static get toolbox() {
+  static get toolbox () {
     return {
       icon: IconFile,
-      title: 'Attachment',
-    };
+      title: 'Attachment'
+    }
   }
 
   /**
@@ -129,8 +129,8 @@ export default class AttachesTool {
    *
    * @returns {boolean}
    */
-  static get isReadOnlySupported() {
-    return true;
+  static get isReadOnlySupported () {
+    return true
   }
 
   /**
@@ -138,7 +138,7 @@ export default class AttachesTool {
    *
    * @returns {object}
    */
-  get CSS() {
+  get CSS () {
     return {
       baseClass: this.api.styles.block,
       apiButton: this.api.styles.button,
@@ -156,8 +156,8 @@ export default class AttachesTool {
       fileInfo: 'cdx-attaches__file-info',
       fileIcon: 'cdx-attaches__file-icon',
       fileIconBackground: 'cdx-attaches__file-icon-background',
-      fileIconLabel: 'cdx-attaches__file-icon-label',
-    };
+      fileIconLabel: 'cdx-attaches__file-icon-label'
+    }
   }
 
   /**
@@ -165,7 +165,7 @@ export default class AttachesTool {
    *
    * @returns {object}
    */
-  get EXTENSIONS() {
+  get EXTENSIONS () {
     return {
       doc: '#1483E9',
       docx: '#1483E9',
@@ -195,8 +195,8 @@ export default class AttachesTool {
       psd: '#388ae5',
       dmg: '#e26f6f',
       json: '#2988f0',
-      csv: '#11AE3D',
-    };
+      csv: '#11AE3D'
+    }
   }
 
   /**
@@ -207,12 +207,12 @@ export default class AttachesTool {
    * @returns {boolean} false if saved data is not correct, otherwise true
    * @public
    */
-  validate(savedData) {
+  validate (savedData) {
     if (isEmpty(savedData.file)) {
-      return false;
+      return false
     }
 
-    return true;
+    return true
   }
 
   /**
@@ -221,21 +221,21 @@ export default class AttachesTool {
    * @param {HTMLElement} toolsContent - block main element returned by the render method
    * @returns {AttachesToolData}
    */
-  save(toolsContent) {
+  save (toolsContent) {
     /**
      * If file was uploaded
      */
     if (this.pluginHasData()) {
-      const titleElement = toolsContent.querySelector(`.${this.CSS.title}`);
+      const titleElement = toolsContent.querySelector(`.${this.CSS.title}`)
 
       if (titleElement) {
         Object.assign(this.data, {
-          title: titleElement.innerHTML,
-        });
+          title: titleElement.innerHTML
+        })
       }
     }
 
-    return this.data;
+    return this.data
   }
 
   /**
@@ -243,34 +243,34 @@ export default class AttachesTool {
    *
    * @returns {HTMLDivElement}
    */
-  render() {
-    const holder = make('div', this.CSS.baseClass);
+  render () {
+    const holder = make('div', this.CSS.baseClass)
 
-    this.nodes.wrapper = make('div', this.CSS.wrapper);
+    this.nodes.wrapper = make('div', this.CSS.wrapper)
 
     if (this.pluginHasData()) {
-      this.showFileData();
+      this.showFileData()
     } else {
-      this.prepareUploadButton();
+      this.prepareUploadButton()
     }
 
-    holder.appendChild(this.nodes.wrapper);
+    holder.appendChild(this.nodes.wrapper)
 
-    return holder;
+    return holder
   }
 
   /**
    * Prepares button for file uploading
    */
-  prepareUploadButton() {
-    this.nodes.button = make('div', [this.CSS.apiButton, this.CSS.button]);
-    this.nodes.button.innerHTML = `${IconFile} ${this.config.buttonText}`;
+  prepareUploadButton () {
+    this.nodes.button = make('div', [this.CSS.apiButton, this.CSS.button])
+    this.nodes.button.innerHTML = `${IconFile} ${this.config.buttonText}`
 
     if (!this.readOnly) {
-      this.nodes.button.addEventListener('click', this.enableFileUpload);
+      this.nodes.button.addEventListener('click', this.enableFileUpload)
     }
 
-    this.nodes.wrapper.appendChild(this.nodes.button);
+    this.nodes.wrapper.appendChild(this.nodes.button)
   }
 
   /**
@@ -279,8 +279,8 @@ export default class AttachesTool {
    *
    * @public
    */
-  appendCallback() {
-    this.nodes.button.click();
+  appendCallback () {
+    this.nodes.button.click()
   }
 
   /**
@@ -288,19 +288,25 @@ export default class AttachesTool {
    *
    * @returns {boolean}
    */
-  pluginHasData() {
-    return this.data.title !== '' || Object.values(this.data.file).some(item => item !== undefined);
+  pluginHasData () {
+    return (
+      this.data.title !== '' ||
+      Object.values(this.data.file).some(item => item !== undefined)
+    )
   }
 
   /**
    * Allow to upload files on button click
    */
-  enableFileUpload() {
+  enableFileUpload () {
     this.uploader.uploadSelectedFile({
       onPreview: () => {
-        this.nodes.wrapper.classList.add(this.CSS.wrapperLoading, this.CSS.loader);
-      },
-    });
+        this.nodes.wrapper.classList.add(
+          this.CSS.wrapperLoading,
+          this.CSS.loader
+        )
+      }
+    })
   }
 
   /**
@@ -308,34 +314,36 @@ export default class AttachesTool {
    *
    * @param {UploadResponseFormat} response - server returned data
    */
-  onUpload(response) {
-    const body = response;
+  onUpload (response) {
+    const body = response
 
     try {
       if (body.success && body.file !== undefined && !isEmpty(body.file)) {
         this.data = {
           file: body.file,
-          title: body.file.title || '',
-        };
+          title: body.file.title || ''
+        }
 
-        this.nodes.button.remove();
-        this.showFileData();
+        this.nodes.button.remove()
+        this.showFileData()
 
-        moveCaretToTheEnd(this.nodes.title);
+        moveCaretToTheEnd(this.nodes.title)
 
-        this.removeLoader();
+        this.removeLoader()
       } else {
-        this.uploadingFailed(this.config.errorMessage);
+        this.uploadingFailed(this.config.errorMessage)
       }
     } catch (error) {
-      console.error('Attaches tool error:', error);
-      this.uploadingFailed(this.config.errorMessage);
+      console.error('Attaches tool error:', error)
+      this.uploadingFailed(this.config.errorMessage)
     }
 
     /**
      * Trigger onChange function when upload finished
      */
-    this.api.blocks.getBlockByIndex(this.api.blocks.getCurrentBlockIndex()).dispatchChange();
+    this.api.blocks
+      .getBlockByIndex(this.api.blocks.getCurrentBlockIndex())
+      .dispatchChange()
   }
 
   /**
@@ -343,20 +351,20 @@ export default class AttachesTool {
    *
    * @param {object<string, string | number | boolean>} file - uploaded file data got from the backend. Could contain any fields.
    */
-  appendFileIcon(file) {
-    const extensionProvided = file.extension;
-    const extension = extensionProvided || getExtensionFromFileName(file.name);
-    const extensionColor = this.EXTENSIONS[extension];
-    const extensionMaxLen = 4;
+  appendFileIcon (file) {
+    const extensionProvided = file.extension
+    const extension = extensionProvided || getExtensionFromFileName(file.name)
+    const extensionColor = this.EXTENSIONS[extension]
+    const extensionMaxLen = 4
 
-    const wrapper = make('div', this.CSS.fileIcon);
-    const background = make('div', this.CSS.fileIconBackground);
+    const wrapper = make('div', this.CSS.fileIcon)
+    const background = make('div', this.CSS.fileIconBackground)
 
     if (extensionColor) {
-      background.style.backgroundColor = extensionColor;
+      background.style.backgroundColor = extensionColor
     }
 
-    wrapper.appendChild(background);
+    wrapper.appendChild(background)
 
     /**
      * If extension exists, add it via a separate element
@@ -367,92 +375,102 @@ export default class AttachesTool {
        * Trim long extensions
        *  'sketch' -> 'sket…'
        */
-      let extensionVisible = extension;
+      let extensionVisible = extension
 
       if (extension.length > extensionMaxLen) {
-        extensionVisible = extension.substring(0, extensionMaxLen) + '…';
+        extensionVisible = extension.substring(0, extensionMaxLen) + '…'
       }
 
       const extensionLabel = make('div', this.CSS.fileIconLabel, {
         textContent: extensionVisible, // trimmed
-        title: extension, // full text for hover
-      });
+        title: extension // full text for hover
+      })
 
       if (extensionColor) {
-        extensionLabel.style.backgroundColor = extensionColor;
+        extensionLabel.style.backgroundColor = extensionColor
       }
 
-      wrapper.appendChild(extensionLabel);
+      wrapper.appendChild(extensionLabel)
     } else {
-      background.innerHTML = IconFile;
+      background.innerHTML = IconFile
     }
 
-    this.nodes.wrapper.appendChild(wrapper);
+    this.nodes.wrapper.appendChild(wrapper)
   }
 
   /**
    * Removes tool's loader
    */
-  removeLoader() {
-    setTimeout(() => this.nodes.wrapper.classList.remove(this.CSS.wrapperLoading, this.CSS.loader), LOADER_TIMEOUT);
+  removeLoader () {
+    setTimeout(
+      () =>
+        this.nodes.wrapper.classList.remove(
+          this.CSS.wrapperLoading,
+          this.CSS.loader
+        ),
+      LOADER_TIMEOUT
+    )
   }
 
   /**
    * If upload is successful, show info about the file
    */
-  showFileData() {
-    this.nodes.wrapper.classList.add(this.CSS.wrapperWithFile);
+  showFileData () {
+    this.nodes.wrapper.classList.add(this.CSS.wrapperWithFile)
 
-    const { file, title } = this.data;
+    const { file, title } = this.data
 
-    this.appendFileIcon(file);
+    this.appendFileIcon(file)
 
-    const fileInfo = make('div', this.CSS.fileInfo);
+    const fileInfo = make('div', this.CSS.fileInfo)
 
     this.nodes.title = make('div', this.CSS.title, {
-      contentEditable: this.readOnly === false,
-    });
+      contentEditable: this.readOnly === false
+    })
 
-    this.nodes.title.dataset.placeholder = this.api.i18n.t('File title');
-    this.nodes.title.textContent = title || '';
-    fileInfo.appendChild(this.nodes.title);
+    // IMPORTANT: if title is empty → set the file name
+    this.nodes.title.dataset.placeholder = this.api.i18n.t('File title')
+    this.nodes.title.textContent = title || file.name || ''
+    fileInfo.appendChild(this.nodes.title)
 
     if (file.size) {
-      let sizePrefix;
-      let formattedSize;
-      const fileSize = make('div', this.CSS.size);
+      let sizePrefix
+      let formattedSize
+      const fileSize = make('div', this.CSS.size)
 
       if (Math.log10(+file.size) >= 6) {
-        sizePrefix = 'MiB';
-        formattedSize = file.size / Math.pow(2, 20);
+        sizePrefix = 'MiB'
+        formattedSize = file.size / Math.pow(2, 20)
       } else {
-        sizePrefix = 'KiB';
-        formattedSize = file.size / Math.pow(2, 10);
+        sizePrefix = 'KiB'
+        formattedSize = file.size / Math.pow(2, 10)
       }
 
-      fileSize.textContent = formattedSize.toFixed(1);
-      fileSize.setAttribute('data-size', sizePrefix);
-      fileInfo.appendChild(fileSize);
+      fileSize.textContent = formattedSize.toFixed(1)
+      fileSize.setAttribute('data-size', sizePrefix)
+      fileInfo.appendChild(fileSize)
     }
 
-    this.nodes.wrapper.appendChild(fileInfo);
+    this.nodes.wrapper.appendChild(fileInfo)
 
     if (file.url) {
       const openBtn = make('div', this.CSS.downloadButton, {
         innerHTML: IconChevronDown
-      });
+      })
 
-      openBtn.style.cursor = 'pointer';
+      openBtn.style.cursor = 'pointer'
 
       openBtn.addEventListener('click', async () => {
-
         // If there is a custom hook, we use it.
-        if (this.config.openFile && typeof this.config.openFile === 'function') {
+        if (
+          this.config.openFile &&
+          typeof this.config.openFile === 'function'
+        ) {
           try {
             await this.config.openFile(file)
             return
           } catch (e) {
-            console.error("openFile hook failed:", e)
+            console.error('openFile hook failed:', e)
           }
         }
 
@@ -460,16 +478,15 @@ export default class AttachesTool {
         try {
           const a = document.createElement('a')
           a.href = file.url
-          a.target = "_blank"
+          a.target = '_blank'
           a.click()
         } catch (e) {
-          console.error("Default open failed:", e)
+          console.error('Default open failed:', e)
         }
       })
 
       this.nodes.wrapper.appendChild(openBtn)
     }
-
   }
 
   /**
@@ -477,13 +494,13 @@ export default class AttachesTool {
    *
    * @param {string} errorMessage -  error message
    */
-  uploadingFailed(errorMessage) {
+  uploadingFailed (errorMessage) {
     this.api.notifier.show({
       message: errorMessage,
-      style: 'error',
-    });
+      style: 'error'
+    })
 
-    this.removeLoader();
+    this.removeLoader()
   }
 
   /**
@@ -491,8 +508,8 @@ export default class AttachesTool {
    *
    * @returns {AttachesToolData}
    */
-  get data() {
-    return this._data;
+  get data () {
+    return this._data
   }
 
   /**
@@ -500,10 +517,10 @@ export default class AttachesTool {
    *
    * @param {AttachesToolData} data - data to set
    */
-  set data({ file, title }) {
+  set data ({ file, title }) {
     this._data = {
       file,
-      title,
-    };
+      title
+    }
   }
 }
